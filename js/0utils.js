@@ -1,0 +1,256 @@
+class ObsidianUtils {
+    // Actions
+    compareActionStatus(a, b) {
+        const {Constants} = customJS;
+        return Constants.action.status.orderedMap[a] > Constants.action.status.orderedMap[b];
+    }
+
+    compareActionPriority(a, b) {
+        const {Constants} = customJS;
+        return Constants.action.priority.orderedMap[a] > Constants.action.priority.orderedMap[b];
+    }
+
+    sortActions(actions) {
+        const {ObsidianUtils} = customJS;
+        return actions
+            .sort(p => p["do-date-obj"], 'desc')
+            //.sort(p => p["status"], 'asc', ObsidianUtils.compareActionStatus)
+            .sort(p => p["alias"][0], 'asc')
+            .sort(p => p["priority"], 'asc', ObsidianUtils.compareActionPriority)
+            ;
+    }
+
+    activeActions(actions) {
+        const {Constants} = customJS;
+        return actions
+            .where(p => (p["status"] != Constants.action.status.done) &&
+                        (p["status"] != Constants.action.status.removed));
+    }
+
+    async updateActionStatusDone(args) {
+        const {
+            action,
+            update,
+            luxon
+        } = args;
+        const {Constants} = customJS;
+        await update("Status", Constants.action.status.done, action.file.path);
+        const today = luxon.DateTime.now().toFormat("yyyy-MM-dd");
+        await update("Done Date", `[[${today}]]`, action.file.path);
+    }
+
+    async updateActionStatusActive(args) {
+        const {
+            action,
+            update,
+        } = args;
+        const {Constants} = customJS;
+        await update("Status", Constants.actions.status.active, action.file.path);
+        await update("Done Date", "", action.file.path);
+    }
+
+    async updateActionStatus(args) {
+        const {
+            action,
+            update,
+            luxon,
+            newStatus,
+        } = args;
+        const {Constants, ObsidianUtils} = customJS;
+        if (newStatus === Constants.action.status.done) {
+            await ObsidianUtils.updateActionStatusDone({action, update, luxon});
+        } else {
+            await update("Status", newStatus, action.file.path);
+            await update("Done Date", "", action.file.path);
+        }
+    }
+
+    async updateActionPriority(args) {
+        const {
+            action,
+            update,
+            newPriority,
+        } = args;
+        await update("Priority", newPriority, action.file.path);
+    }
+
+    // Projects
+    compareProjectStatus(a, b) {
+        const {Constants} = customJS;
+        return Constants.project.status.orderedMap[a] > Constants.project.status.orderedMap[b];
+    }
+
+    sortProjects(projects) {
+        const {ObsidianUtils} = customJS;
+        return projects
+            .sort(p => p["priority"], 'asc')
+            .sort(p => p["status"], 'desc', ObsidianUtils.compareProjectStatus);
+    }
+
+    async updateProjectStatusCompleted(args) {
+        const {
+            project,
+            update,
+            luxon
+        } = args;
+        const {Constants} = customJS;
+        await update("Status", Constants.project.status.completed, project.file.path);
+        const today = luxon.DateTime.now().toFormat("yyyy-MM-dd");
+        await update("finish", `[[${today}]]`, project.file.path);
+    }
+
+    async updateProjectStatus(args) {
+        const {
+            project,
+            update,
+            luxon,
+            newStatus,
+        } = args;
+        const {Constants, ObsidianUtils} = customJS;
+        if (newStatus === Constants.project.status.completed) {
+            await ObsidianUtils.updateProjectStatusCompleted({project, update, luxon});
+        } else {
+            await update("Status", newStatus, project.file.path);
+            await update("finish", "", project.file.path);
+        }
+    }
+
+    // TODO: Add various fields to projects that would be useful for tables
+    // Remaining Active Actions
+    // Completed Actions
+    // Done Percent
+    decorateProject() {
+    }
+
+    // Outcomes
+    compareOutcomeStatus(a, b) {
+        const {Constants} = customJS;
+        return Constants.outcome.status.orderedMap[a] > Constants.outcome.status.orderedMap[b];
+    }
+
+    sortOutcomes(outcomes) {
+        const {ObsidianUtils} = customJS;
+        return outcomes
+            .sort(p => p["status"], 'desc', ObsidianUtils.compareOutcomeStatus);
+    }
+
+    async updateOutcomeStatusCompleted(args) {
+        const {
+            outcome,
+            update,
+            luxon
+        } = args;
+        const {Constants} = customJS;
+        await update("Status", Constants.outcome.status.completed, outcome.file.path);
+        const today = luxon.DateTime.now().toFormat("yyyy-MM-dd");
+        await update("finish", `[[${today}]]`, outcome.file.path);
+    }
+
+    async updateOutcomeStatus(args) {
+        const {
+            outcome,
+            update,
+            luxon,
+            newStatus,
+        } = args;
+        const {Constants, ObsidianUtils} = customJS;
+        if (newStatus === Constants.outcome.status.completed) {
+            await ObsidianUtils.updateOutcomeStatusCompleted({outcome, update, luxon});
+        } else {
+            await update("Status", newStatus, outcome.file.path);
+            await update("finish", "", outcome.file.path);
+        }
+    }
+
+    // Objectives
+    compareObjectiveStatus(a, b) {
+        const {Constants} = customJS;
+        return Constants.objective.status.orderedMap[a] > Constants.objective.status.orderedMap[b];
+    }
+
+    sortObjectives(objectives) {
+        const {ObsidianUtils} = customJS;
+        return objectives
+            .sort(p => p["priority"], 'asc')
+            .sort(p => p["status"], 'desc', ObsidianUtils.compareObjectiveStatus);
+    }
+
+    async updateObjectiveStatusCompleted(args) {
+        const {
+            objective,
+            update,
+            luxon
+        } = args;
+        const {Constants} = customJS;
+        await update("Status", Constants.objective.status.completed, objective.file.path);
+        const today = luxon.DateTime.now().toFormat("yyyy-MM-dd");
+        await update("finish", `[[${today}]]`, objective.file.path);
+    }
+
+    async updateObjectiveStatus(args) {
+        const {
+            objective,
+            update,
+            luxon,
+            newStatus,
+        } = args;
+        const {Constants, ObsidianUtils} = customJS;
+        if (newStatus === Constants.objective.status.completed) {
+            await ObsidianUtils.updateOutcomeStatusDone({objective, update, luxon});
+        } else {
+            await update("Status", newStatus, objective.file.path);
+            await update("finish", "", objective.file.path);
+        }
+    }
+
+    // Misc
+    getDisplayLink(target, display) {
+        return `[[${target}|${display}]]`;
+    }
+
+    mutateFieldToDate(args) {
+        const {
+            page,
+            field,
+            luxon
+        } = args;
+        if (page[field]) {
+            page[field + "-obj"] = luxon.DateTime.fromISO(page[field].path);   
+        }
+    }
+
+    async updateActionWithProjectContext(args) {
+        const {
+            app,
+            action,
+            project,
+        } = args;
+        const { metaedit } = app.plugins.plugins
+        const { update } = metaedit.api
+
+        await update("Pillars", project["Pillars"], action.file.path);
+        await update("Projects", project.file.link, action.file.path);
+    }
+
+    async createNewNoteInVaultAndOpen(args) {
+        const {
+            app,
+            filePath,
+            contents,
+            split=false,
+        } = args;
+        try {
+            await app.vault.create(filePath, contents);
+            const file = app.vault.getAbstractFileByPath(filePath);
+            if (split) {
+                await app.workspace.splitActiveLeaf().openFile(file);
+            } else {
+                app.workspace.activeLead.openFile(file);
+            }
+            return file;
+        } catch (e) {
+            new app.Notice(`[createNewNoteInVaultAndOpen] Failed: ${e}`, 2000);
+        }
+        return null;
+    }
+}

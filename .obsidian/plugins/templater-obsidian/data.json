@@ -1,0 +1,57 @@
+{
+  "command_timeout": 5,
+  "templates_folder": "900 Templates",
+  "templates_pairs": [
+    [
+      "",
+      ""
+    ]
+  ],
+  "trigger_on_file_creation": true,
+  "auto_jump_to_cursor": false,
+  "enable_system_commands": false,
+  "shell_path": "",
+  "user_scripts_folder": "",
+  "enable_folder_templates": true,
+  "folder_templates": [
+    {
+      "folder": "300 🚰 Pipelines/320 🛠 Actions",
+      "template": "900 Templates/🛠 New Action.md"
+    },
+    {
+      "folder": "300 🚰 Pipelines/330 🧗 Projects",
+      "template": "900 Templates/🧗 New Project.md"
+    },
+    {
+      "folder": "300 🚰 Pipelines/350 🎯 Outcomes",
+      "template": "900 Templates/🎯 New Outcome.md"
+    },
+    {
+      "folder": "300 🚰 Pipelines/370 🎨 Objectives",
+      "template": "900 Templates/🎨 New Objective.md"
+    },
+    {
+      "folder": "500 ♽ Cycles/590 🌏 Years",
+      "template": "900 Templates/🌏 New Year.md"
+    },
+    {
+      "folder": "500 ♽ Cycles/550 📅 Months",
+      "template": "900 Templates/📅 New Month.md"
+    },
+    {
+      "folder": "500 ♽ Cycles/520 🌄 Days",
+      "template": "900 Templates/🌄 New Day.md"
+    },
+    {
+      "folder": "700 Vaults/People",
+      "template": "900 Templates/👤 New Person.md"
+    }
+  ],
+  "syntax_highlighting": true,
+  "enabled_templates_hotkeys": [
+    ""
+  ],
+  "startup_templates": [
+    ""
+  ]
+}

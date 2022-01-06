@@ -1,0 +1,11 @@
+{
+  "replaceTwitterLinks": true,
+  "replaceYouTubeLinks": true,
+  "replaceInstagramLinks": true,
+  "replaceFlatIOLinks": true,
+  "replaceNoteflightLinks": true,
+  "twitterTheme": "auto",
+  "keepLinksInPreview": false,
+  "embedPlacement": "above",
+  "disableAutomaticEmbeds": false
+}

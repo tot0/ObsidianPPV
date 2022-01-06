@@ -1,0 +1,42 @@
+{
+  "highlighterStyle": "rounded",
+  "highlighterMethods": "inline-styles",
+  "highlighters": {
+    "Pink": "#FFB8EBA6",
+    "Red": "#FF5582A6",
+    "Orange": "#FFB86CA6",
+    "Yellow": "#FFF3A3A6",
+    "Green": "#BBFABBA6",
+    "Cyan": "#ABF7F7A6",
+    "Blue": "#ADCCFFA6",
+    "Purple": "#D2B3FFA6",
+    "Grey": "#CACFD9A6",
+    "Notion-Orange": "#FFA344A6",
+    "Notion-Pink": "#E255A1A6",
+    "Notion-Red": "#FF7369A6",
+    "Notion-Yellow": "#FFDC49A6",
+    "Notion-Green": "#4DAB9AA6",
+    "Notion-Blue": "#529CCAA6",
+    "Notion-Purple": "#9A6DD7A6",
+    "Notion-Grey": "#979A9BA6"
+  },
+  "highlighterOrder": [
+    "Pink",
+    "Red",
+    "Orange",
+    "Yellow",
+    "Green",
+    "Cyan",
+    "Blue",
+    "Purple",
+    "Grey",
+    "Notion-Red",
+    "Notion-Orange",
+    "Notion-Yellow",
+    "Notion-Green",
+    "Notion-Blue",
+    "Notion-Purple",
+    "Notion-Pink",
+    "Notion-Grey"
+  ]
+}
