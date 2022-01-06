@@ -17,7 +17,7 @@ Done Date::
 Projects:: 
 Pillars:: 
 Status:: 🟢 Active
-Owner:: [[Lucas Pickup]]
+Owner:: 
 ```dataviewjs
 const {DvActions} = customJS
 DvActions.getActionStatusButtons({app, dv, luxon, that:this, action:dv.current()})

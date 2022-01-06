@@ -29,7 +29,6 @@ DvActions.getProjectStatusButtons({app, dv, luxon, that:this, project:dv.current
 ## Actions
 ```dataviewjs
 const {DvActions} = customJS
-//DvActions.getNewActionButton({app, dv, luxon, that:this})
 DvActions.getNewActionButtonContextAware({
     app,
     dv,
@@ -45,7 +44,8 @@ DvActions.getNewActionButtonContextAware({
 const {Constants, ObsidianUtils} = customJS;
 let projActions = this.current().file.inlinks
     .map(l => dv.page(l))
-    .where(p => p.file.tags.includes("#action"));
+    .where(p => p.file.tags.includes("#action"))
+    .where(p => p["projects"].map(p => p.path).includes(this.current().file.name));
 let activeActions = ObsidianUtils.activeActions(projActions);
 let sortedActions = ObsidianUtils.sortActions(activeActions);
 //dv.el("b", activeActions);
@@ -60,6 +60,7 @@ const {Constants, ObsidianUtils} = customJS;
 let projActions = this.current().file.inlinks
     .map(l => dv.page(l))
     .where(p => p.file.tags.includes("#action"))
+    .where(p => p["projects"].map(p => p.path).includes(this.current().file.name))
     .where(p => p["status"] == Constants.action.status.done);
 let sortedActions = ObsidianUtils.sortActions(projActions);
 dv.table(
