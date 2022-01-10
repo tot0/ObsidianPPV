@@ -35,8 +35,16 @@
       "template": "900 Templates/🌏 New Year.md"
     },
     {
+      "folder": "500 ♽ Cycles/570 ⌛️ Quarters",
+      "template": "900 Templates/⌛️ New Quarter.md"
+    },
+    {
       "folder": "500 ♽ Cycles/550 📅 Months",
       "template": "900 Templates/📅 New Month.md"
+    },
+    {
+      "folder": "500 ♽ Cycles/530 🗓 Weeks",
+      "template": "900 Templates/🗓 New Week.md"
     },
     {
       "folder": "500 ♽ Cycles/520 🌄 Days",
@@ -45,6 +53,14 @@
     {
       "folder": "700 Vaults/People",
       "template": "900 Templates/👤 New Person.md"
+    },
+    {
+      "folder": "700 Vaults/710 🏆 Accomplishments",
+      "template": "900 Templates/🏆 New Accomplishment.md"
+    },
+    {
+      "folder": "700 Vaults/720 😫 Disappointments",
+      "template": "900 Templates/😫 New Disappointment.md"
     }
   ],
   "syntax_highlighting": true,
