@@ -2,10 +2,10 @@
 tags:
 - dashboard
 ---
+
 # Insight
 
 ## 🧭 Guiding Principles
-
 ![[003 🧭 Guiding Principles#🧭 Guiding Principles]]
 
 ## Review Cycles
@@ -19,3 +19,10 @@ TABLE WITHOUT ID
     Quarters
 FROM "500 ♽ Cycles/590 🌏 Years"
 ```
+## Quarterly & Monthly Insight
+
+
+
+## Weekly Insight
+
+![[530 🗓 Weeks|🗓 Weeks]]

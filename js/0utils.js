@@ -2,12 +2,36 @@ class ObsidianUtils {
     // Actions
     compareActionStatus(a, b) {
         const {Constants} = customJS;
-        return Constants.action.status.orderedMap[a] > Constants.action.status.orderedMap[b];
+        return Constants.action.status.orderedMap.get(a) > Constants.action.status.orderedMap.get(b) ? 1 : -1;
     }
 
     compareActionPriority(a, b) {
         const {Constants} = customJS;
-        return Constants.action.priority.orderedMap[a] > Constants.action.priority.orderedMap[b];
+        return Constants.action.priority.orderedMap.get(a) > Constants.action.priority.orderedMap.get(b) ? 1 : -1;
+    }
+
+    getActionFieldCompareFunc(field) {
+        const {ObsidianUtils} = customJS;
+        const map = {
+            'status': ObsidianUtils.compareActionStatus,
+            'priority': ObsidianUtils.compareActionPriority,
+            'do-date': (a, b) => a < b ? -1 : 1,
+            'alias': (a, b) => a[0] > b[0] ? -1 : 1,
+        };
+        return map[field];
+    }
+
+    // > 0	 sort b before a
+    // < 0	 sort a before b
+    // === 0 keep original order of a and b
+    compareActions(a, b) {
+        const defaultFieldOrder = ["priority", "do-date", "status", "alias"];
+        for (const field of defaultFieldOrder) {
+            if (a[field] != b[field]) {
+                return this.getActionFieldCompareFunc(field)(a[field], b[field]);
+            }
+        }
+        return 0;
     }
 
     sortActions(actions) {
@@ -77,7 +101,7 @@ class ObsidianUtils {
     // Projects
     compareProjectStatus(a, b) {
         const {Constants} = customJS;
-        return Constants.project.status.orderedMap[a] > Constants.project.status.orderedMap[b];
+        return Constants.project.status.orderedMap.get(a) > Constants.project.status.orderedMap.get(b);
     }
 
     sortProjects(projects) {
@@ -125,7 +149,7 @@ class ObsidianUtils {
     // Outcomes
     compareOutcomeStatus(a, b) {
         const {Constants} = customJS;
-        return Constants.outcome.status.orderedMap[a] > Constants.outcome.status.orderedMap[b];
+        return Constants.outcome.status.orderedMap.get(a) > Constants.outcome.status.orderedMap.get(b);
     }
 
     sortOutcomes(outcomes) {
@@ -165,7 +189,7 @@ class ObsidianUtils {
     // Objectives
     compareObjectiveStatus(a, b) {
         const {Constants} = customJS;
-        return Constants.objective.status.orderedMap[a] > Constants.objective.status.orderedMap[b];
+        return Constants.objective.status.orderedMap.get(a) > Constants.objective.status.orderedMap.get(b);
     }
 
     sortObjectives(objectives) {

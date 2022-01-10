@@ -11,7 +11,7 @@ date: <% tp.file.creation_date() %>
 [[<% tp.date.now("YYYY-MM-DD", -1) %>]] <=> [[<% tp.date.now("YYYY-MM-DD", 1) %>]]
 
 # 🌄 <% tp.date.now(format="dddd, MMM Do") %>
-Week:: [[<% tp.date.now("YYYY") %>W<% tp.date.now("WW") %>]]
+Week:: [[<% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>]]
 Month:: [[<% tp.date.now("YYYY-MM") %>|<% tp.date.now("MMMM") %>]]
 Quarter:: [[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %>]]
 Year:: [[<% tp.date.now("YYYY") %>]]
@@ -45,18 +45,11 @@ const {DvActions} = customJS
 DvActions.getTodayActionTable({app, dv, luxon, that:this})
 ```
 
-## Mindset
-
-> [[☯️ Mental Clarity]]
-
-</aside>
+## [[☯️ Mental Clarity]]
 
 -   [ ] **Check:** What should I be checking Daily?
 
 # End of Day
-
-## Habits & Routines
-
 
 ## Today's Wins
 
@@ -71,3 +64,5 @@ dv.table(
 	["Action", "Priority", "Do Date", "Status"],
     sortedActions.map(p => ["[["+p.file.name+ "|"+p.alias[0].substring(0, 60)+"]]" , p["Priority"], p["Do Date"], p["Status"]]));
 ```
+
+Improvements:: 
