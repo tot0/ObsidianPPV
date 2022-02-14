@@ -26,12 +26,12 @@ DvActions.getNewFileButton({
 ```dataviewjs
 const {Constants, ObsidianUtils} = customJS;
 let weeks = dv.pages("#week");
-let fourWeeks = luxon.Duration.fromISO('P4W');
-let currentWeek = luxon.DateTime.now().toFormat("yyyy'W'WW");
-let fourWeeksAgo = luxon.DateTime.now().minus(fourWeeks).toFormat("yyyy'W'WW");
+let fourWeeks = luxon.Duration.fromISO('P3W');
+let currentWeek = luxon.DateTime.now().toFormat("yyyy'-W'WW");
+let fourWeeksAgo = luxon.DateTime.now().minus(fourWeeks).toFormat("yyyy'-W'WW");
 let activeWeeks = weeks
-    .where(p => p.file.name >= fourWeeksAgo && p.file.name < currentWeek)
-    .sort(p => p.file.name, 'asc');
+    .where(p => p.file.name >= fourWeeksAgo && p.file.name <= currentWeek)
+    .sort(p => p.file.name, 'desc');
 
 dv.table(
     ["Week", "Wins", "Challenges", "Improvements", "Reviewed"],
@@ -40,8 +40,7 @@ dv.table(
         p["wins"],
         p["challenges"],
         p["improvements"],
-        p["reviewed"]
+        p["Reviewed"]
     ])
 );
 ```
-

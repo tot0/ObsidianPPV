@@ -61,6 +61,14 @@
     {
       "folder": "700 Vaults/720 😫 Disappointments",
       "template": "900 Templates/😫 New Disappointment.md"
+    },
+    {
+      "folder": "700 Vaults/🏋️ Workouts",
+      "template": "900 Templates/🏋️ New Workout.md"
+    },
+    {
+      "folder": "700 Vaults/Notes",
+      "template": "900 Templates/📝 New Note.md"
     }
   ],
   "syntax_highlighting": true,

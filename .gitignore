@@ -1,0 +1,55 @@
+.DS_Store
+
+# Include only generic Pillars
+000 🏛 Pillars/*
+!000 🏛 Pillars/003 🧭 Guiding Principles.md
+!000 🏛 Pillars/999 🏛 Pillars.md
+!000 🏛 Pillars/☯️ Mental Clarity.md
+!000 🏛 Pillars/🏠 Home.md
+!000 🏛 Pillars/👥 Friends & Social.md
+!000 🏛 Pillars/💗 Health & Fitness.md
+!000 🏛 Pillars/💸 Admin & Finance.md
+!000 🏛 Pillars/💾 Admin & Team.md
+!000 🏛 Pillars/🤯 Mind Expansion.md
+!000 🏛 Pillars/🥰 Love.md
+!000 🏛 Pillars/090 ♻️ Habits/Morning Walk.md
+
+# Include only Pipeline Dashboards
+300 🚰 Pipelines/320 🛠 Actions/*
+!300 🚰 Pipelines/320 🛠 Actions/320 🛠 Actions.md
+300 🚰 Pipelines/330 🧗 Projects/*
+!300 🚰 Pipelines/330 🧗 Projects/330 🧗 Projects.md
+300 🚰 Pipelines/350 🎯 Outcomes/*
+!300 🚰 Pipelines/350 🎯 Outcomes/350 🎯 Outcomes.md
+300 🚰 Pipelines/370 🎨 Objectives/*
+!300 🚰 Pipelines/370 🎨 Objectives/370 🎨 Objectives.md
+
+# Include only Cycle Dashboards
+500 ♽ Cycles/520 🌄 Days/*
+!500 ♽ Cycles/520 🌄 Days/520 🌄 Days.md
+500 ♽ Cycles/530 🗓 Weeks/*
+!500 ♽ Cycles/530 🗓 Weeks/530 🗓 Weeks.md
+500 ♽ Cycles/550 📅 Months/*
+!500 ♽ Cycles/550 📅 Months/550 📅 Months.md
+500 ♽ Cycles/570 ⌛️ Quarters/*
+!500 ♽ Cycles/570 ⌛️ Quarters/570 ⌛️ Quarters.md
+500 ♽ Cycles/590 🌏 Years/*
+!500 ♽ Cycles/590 🌏 Years/590 🌏 Years.md
+
+# Include only Vault Dashboards
+700 Vaults/🏋️ Workouts/*
+!700 Vaults/🏋️ Workouts/🏋️ Workouts.md
+700 Vaults/710 🏆 Accomplishments/*
+!700 Vaults/710 🏆 Accomplishments/🏆 Accomplishments.md
+700 Vaults/720 😫 Disappointments/*
+!700 Vaults/720 😫 Disappointments/😫 Disappointments.md
+700 Vaults/Notes/*
+700 Vaults/People/*
+700 Vaults/Resources/*
+
+Readwise
+
+# .obsidian exlcudes
+.obsidian/workspace*
+.obsidian/plugins/obsidian-toggl-integration/data.json
+.obsidian/plugins/readwise-official/data.json

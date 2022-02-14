@@ -24,7 +24,7 @@ const {Constants, ObsidianUtils} = customJS;
 let projects = dv.pages("#project");
 let activeProjects = projects
     .where(p => p["status"] == Constants.project.status.active)
-    .sort(p => p["priority"], 'desc');
+    .sort(p => p["priority"], 'asc');
 dv.table(
     ["Project", "Priority", "Quarter", "Status"],
     activeProjects.map(p => [

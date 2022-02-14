@@ -11,6 +11,9 @@ Year:: [[<% tp.date.now("YYYY") %>]]
 
 🔥 **Do 12-Week Years!**
 
+## 0. Framing
+
+
 ## 1. Debrief
 
 - [ ] Review [[🏆 Accomplishments]]
@@ -51,9 +54,9 @@ dv.table(
 );
 ```
 
-<mark style="background: #529CCAA6;">Working::</mark> 
-<mark style="background: #529CCAA6;">Not Working::</mark> 
-<mark style="background: #E255A1A6;">Changes::</mark> 
+Working::
+Not Working:: 
+Changes::
 
 Playlist:: 
 - [ ] 🎵 Create new Quarterly Playlist in Spotify

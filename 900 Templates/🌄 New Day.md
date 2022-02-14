@@ -38,7 +38,7 @@ Weight::
 ## Thoughts
 
 
-### **Today's Action Items**
+## **Today's Action Items**
 
  ```dataviewjs
 const {DvActions} = customJS
@@ -66,3 +66,7 @@ dv.table(
 ```
 
 Improvements:: 
+
+```toggl
+SUMMARY FROM <% tp.date.now("YYYY-MM-DD") %> TO <% tp.date.now("YYYY-MM-DD") %>
+```

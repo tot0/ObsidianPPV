@@ -1,4 +1,6 @@
 ---
+alias:
+- 🏆 New Accomplishment
 tags:
 - accomplishment
 ---

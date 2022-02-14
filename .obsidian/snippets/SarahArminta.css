@@ -1,0 +1,174 @@
+/* Buttons Plugin styling */
+
+.dataview-button {
+
+  border-style: solid;
+  border-width: thin;
+  border-color: rgb(149, 213, 234);
+  color: rgb(149, 213, 234);
+  font-weight: bold;
+  background-color: transparent;
+  padding: 5px 15px;
+  font-size: 11px;
+}
+
+/* Dataview table row coloring and highlighting */
+
+tbody tr:hover {
+  border-color: rgb(149, 213, 234);
+  border-width: 2px;
+  border-style: solid;
+}
+
+tr:nth-child(even) { background-color: rgba(136, 192, 208, 0.1);}
+
+/* Nord customizations */
+
+/* Headings */
+
+.cm-header-1, .markdown-preview-section h1 {
+  color: rgb(237, 126, 163) !important;
+}
+
+.markdown-preview-view h1 {
+  color: rgb(237, 126, 163) !important;
+  font-weight: 500;
+}
+
+h1 {
+  color: rgb(237, 126, 163) !important;
+  font-weight: 500;
+  font-size: 36px;
+}
+
+.cm-header-2, .markdown-preview-section h2 {
+  color: rgb(149, 213, 234) !important;
+}
+
+.cm-header-6, .markdown-preview-section h6 {
+  font-size: 16px !important;
+  color: rgb(251, 186, 121) !important;
+}
+
+/* Font sizing */
+
+html, body {
+  font-size: 12px !important;
+}
+
+.content.svelte-zpfope {
+  font-size: 12px !important;
+}
+
+.compact.svelte-zpfope {
+  font-size: 12px !important;
+}
+
+
+/* Lists bullet colors */
+
+::marker {
+  /*color: var(--purple);*/
+  color: rgb(184, 148, 255);
+}
+
+/* Tags */
+
+.tag {
+  background-color: var(--text-accent);
+  border: none;
+  color: white !important;
+  font-size: 14px !important;
+  padding: 1px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0px 0px;
+  cursor: pointer;
+  border-radius: 14px;
+}
+
+.tag:hover {
+    color: white;
+    background-color: #ffffff21;
+}
+
+/* frontmatter */
+
+.theme-dark .cm-s-obsidian .cm-hmd-frontmatter.cm-atom, .theme-dark .cm-s-obsidian .cm-math.cm-atom, .theme-dark .cm-s-obsidian pre.HyperMD-codeblock .cm-atom {
+    color: #EBCB8B !important;
+}
+
+.theme-light .cm-s-obsidian .cm-hmd-frontmatter.cm-atom, .theme-light .cm-s-obsidian .cm-math.cm-atom, .theme-light .cm-s-obsidian pre.HyperMD-codeblock .cm-atom {
+    color: #EBCB8B !important;
+}
+
+.theme-dark .cm-s-obsidian .cm-hmd-frontmatter.cm-def, .theme-dark .cm-s-obsidian .cm-math.cm-def, .theme-dark .cm-s-obsidian pre.HyperMD-codeblock .cm-def {
+    color: #A3BE8C !important;
+}
+
+.theme-light .cm-s-obsidian .cm-hmd-frontmatter.cm-def, .theme-light .cm-s-obsidian .cm-math.cm-def, .theme-light .cm-s-obsidian pre.HyperMD-codeblock .cm-def {
+    color: #A3BE8C !important;
+}
+
+.theme-dark .cm-s-obsidian .cm-hmd-frontmatter, .theme-dark .cm-s-obsidian pre.HyperMD-codeblock {
+    color: #95D5EA !important;
+}
+
+.theme-light .cm-s-obsidian .cm-hmd-frontmatter, .theme-light .cm-s-obsidian pre.HyperMD-codeblock {
+    color: #95D5EA !important;
+}
+
+/* Hiding the title bar */
+
+.titlebar {
+    background-color: rgb(0 0 0 / 0%);
+}
+
+.titlebar-inner {
+    color: rgb(0 0 0 / 0%);
+}
+
+/* Hover preview adjustments */
+
+.popover.hover-popover:not(.image-embed), .popover.hover-popover:not(.image-embed) > .markdown-embed {
+  height: 300px;
+  width: 700px;
+  max-height: 500px;
+  max-width: 700px;
+}
+
+/* For image file popover hover preview */
+
+.popover.hover-popover.image-embed > img {
+  min-height: 250px;
+  max-height: 80vh;
+  min-width: 600px;
+  max-width: 80vw;
+}
+.popover.hover-popover.image-embed {
+  left: 50vw !important;
+  top: 50vh !important;
+  transform: translate(-50%,-50%);
+  width: unset;
+  max-height: unset;
+}
+
+/* On embed page preview click image to make larger */
+
+.popover.hover-popover:not(.image-embed) img:active {
+  cursor:zoom-out;
+  display:block;
+  z-index:100;
+  position:fixed;
+  background:var(--background-translucent);
+  top:0%;
+  left:0%;
+  transform:translate(50%,50%);
+  width: unset;
+  max-width: unset;
+  min-width: unset;
+  height: unset;
+  max-height: unset;
+  min-height: unset;
+}

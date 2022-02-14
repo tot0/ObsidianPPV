@@ -1,6 +1,6 @@
 ---
 alias:
-- 
+- 🛠 New Action
 tags:
 - action
 created: <% tp.file.creation_date() %>
@@ -18,8 +18,9 @@ Projects::
 Pillars:: 
 Status:: 🟢 Active
 Owner:: [[Lucas Pickup|Lucas]]
+Next:: 
 ```dataviewjs
 const {DvActions} = customJS
 DvActions.getActionStatusButtons({app, dv, luxon, that:this, action:dv.current()})
 ```
-# 
+# 🛠 New Action

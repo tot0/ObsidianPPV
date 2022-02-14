@@ -14,7 +14,10 @@ class DvActions {
         const {ObsidianUtils} = customJS;
         const { luxon, dv } = args;
         return dv.pages('#action')
-            .mutate(page => ObsidianUtils.mutateFieldToDate({luxon, page, field: "do-date"}));
+            .mutate(page => {
+                ObsidianUtils.mutateFieldToDate({luxon, page, field: "do-date"});
+                ObsidianUtils.mutateFieldToDate({luxon, page, field: "done-date"})
+            });
     }
 
     getDoToday(args) {
@@ -22,9 +25,38 @@ class DvActions {
         const { luxon } = args;
         let actions = this.getActions(args);
         let doToday = ObsidianUtils.activeActions(actions)
+            .where(p => p["do-date-obj"] != null)
             .where(p => p["do-date-obj"] <= luxon.DateTime.now());
         let doTodaySorted = ObsidianUtils.sortActions(doToday);
         return doTodaySorted;
+    }
+
+    getActiveActions(args) {
+        const { ObsidianUtils } = customJS;
+        const { start, end } = args;
+        let actions = this.getActions(args);
+        let activeActions = ObsidianUtils.activeActions(actions);
+        if (start != null && end != null) {
+            activeActions = activeActions.where(p => p["do-date-obj"] >= start && p["do-date-obj"] <= end);
+        }
+        let activeActionsSorted = ObsidianUtils.sortActions(activeActions);
+        return activeActionsSorted;
+    }
+
+    getDoneActions(args) {
+        const { ObsidianUtils } = customJS;
+        const { start, end } = args;
+        let actions = this.getActions(args);
+        let doneActions = actions
+            .where(p => p["done-date"])
+            .where(p => (p["done-date-obj"] >= start && p["done-date-obj"] <= end));
+        //let doneActionsSorted = ObsidianUtils.sortActions(doneActions);
+        return doneActions
+        //.sort(p => p["projects"][0], 'asc')
+        //.sort(p => p["status"], 'asc', ObsidianUtils.compareActionStatus)
+        .sort(p => p["alias"][0], 'desc')
+        .sort(p => p["do-date-obj"], 'desc')
+        .sort(p => p["priority"], 'asc', ObsidianUtils.compareActionPriority);
     }
 
     getTodayActionTable(args) {
@@ -276,15 +308,6 @@ class DvActions {
         const { buttons } = app.plugins.plugins
         const { createButton } = buttons
 
-        // return this.getNewFileButton({
-        //     that,
-        //     app,
-        //     luxon,
-        //     buttonName: "🛠 New Action",
-        //     folder: "300 🚰 Pipelines/320 🛠 Actions",
-        //     split,
-        // });
-
         let createAndUpdate = async args => {
             const {
                 dv,
@@ -293,13 +316,9 @@ class DvActions {
             } = args;
     
             let file = await ObsidianUtils.createNewNoteInVaultAndOpen(args);
-            console.log(filePath);
-            console.log(file);
             // Wait for file to be created.
             await new Promise(r => setTimeout(r, 300));
             let action = dv.page(file.path);
-            console.log(action);
-            console.log(project.file.path);
             await ObsidianUtils.updateActionWithProjectContext({project, action, ...args});
         };
 
