@@ -16,7 +16,7 @@ class ObsidianUtils {
             'status': ObsidianUtils.compareActionStatus,
             'priority': ObsidianUtils.compareActionPriority,
             'do-date': (a, b) => a < b ? -1 : 1,
-            'alias': (a, b) => a[0] > b[0] ? -1 : 1,
+            'alias': (a, b) => a[0] > b[0] ? -1 : 1
         };
         return map[field];
     }
@@ -25,7 +25,7 @@ class ObsidianUtils {
     // < 0	 sort a before b
     // === 0 keep original order of a and b
     compareActions(a, b) {
-        const defaultFieldOrder = ["priority", "do-date", "status", "alias"];
+        const defaultFieldOrder = [ "alias"];
         for (const field of defaultFieldOrder) {
             if (a[field] != b[field]) {
                 return this.getActionFieldCompareFunc(field)(a[field], b[field]);
@@ -35,12 +35,12 @@ class ObsidianUtils {
     }
 
     sortActions(actions) {
-        const {ObsidianUtils} = customJS;
         return actions
+            //.sort(p => p["projects"][0], 'asc')
+            //.sort(p => p["status"], 'asc', this.compareActionStatus)
+            .sort(p => p["alias"][0], 'desc')
             .sort(p => p["do-date-obj"], 'desc')
-            //.sort(p => p["status"], 'asc', ObsidianUtils.compareActionStatus)
-            .sort(p => p["alias"][0], 'asc')
-            .sort(p => p["priority"], 'asc', ObsidianUtils.compareActionPriority)
+            .sort(p => p["priority"], 'asc', this.compareActionPriority)
             ;
     }
 
@@ -240,6 +240,8 @@ class ObsidianUtils {
         } = args;
         if (page[field]) {
             page[field + "-obj"] = luxon.DateTime.fromISO(page[field].path);   
+        } else {
+            page[field + "-obj"] = null;
         }
     }
 
@@ -253,7 +255,7 @@ class ObsidianUtils {
         const { update } = metaedit.api
 
         await update("Pillars", project["Pillars"], action.file.path);
-        await update("Projects", project.file.link, action.file.path);
+        await update("Projects", `[[${project.file.name}]]`, action.file.path);
     }
 
     async createNewNoteInVaultAndOpen(args) {
@@ -273,7 +275,7 @@ class ObsidianUtils {
             }
             return file;
         } catch (e) {
-            new app.Notice(`[createNewNoteInVaultAndOpen] Failed: ${e}`, 2000);
+            new console.log(`[createNewNoteInVaultAndOpen] Failed: ${e}`);
         }
         return null;
     }

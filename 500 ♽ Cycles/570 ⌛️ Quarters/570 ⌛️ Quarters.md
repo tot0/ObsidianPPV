@@ -26,7 +26,7 @@ DvActions.getNewFileButton({
 const {Constants, ObsidianUtils} = customJS;
 let quarters = dv.pages("#quarter");
 let activeQuarters = quarters
-    .where(p => p.file.name == luxon.DateTime.now().toFormat("yyyy"))
+    .where(p => p.file.name.startsWith(luxon.DateTime.now().toFormat("yyyy")))
     .sort(p => p.file.name, 'asc');
 activeQuarters.mutate(p => {
     p["projects"] = p.file.inlinks
@@ -39,7 +39,7 @@ dv.table(
         p.file.link,
         p["projects"]
             .where(p => p["status"] == Constants.project.status.active)
-            .count(),
+            .length,
         p["projects"].map(p => p.file.link),
         p["status"]
     ])

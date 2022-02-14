@@ -7,39 +7,71 @@ tags:
 ---
 
 # 🗓 <% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>
-
+[[<% tp.date.weekday("YYYY-MM-DD", 1) %>]] => [[<% tp.date.weekday("YYYY-MM-DD", 7) %>]]
 Year:: [[<% tp.date.now("YYYY") %>]]
 Quarter:: [[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %>]]
 Month:: [[<% tp.date.now("YYYY-MM") %>|<% tp.date.now("MMMM") %>]]
 
 Focus:: 
 
-## ## Actions Taken
+## Actions Taken
 
 ```dataviewjs
-const {ObsidianUtils, Constants} = customJS;
+const {DvActions, ObsidianUtils} = customJS;
 let week = luxon.DateTime.fromISO(this.current().file.name);
-let startWeek = week.startOf('week');
-let endWeek = week.endOf('week');
-let weekActions = dv.pages("#action")
-    .where(p => p["done-date"])
-    .where(p => {
-        let doneDate = luxon.DateTime.fromISO(p["done-date"].path);
-        return doneDate >= startWeek && doneDate <= endWeek;
-    })
-    .array();
-let sortedWeekActions = weekActions.sort((a, b) => ObsidianUtils.compareActions(a, b));
+let weekActions = DvActions.getDoneActions({luxon, dv, start: week.startOf('week'), end: week.endOf('week')});
+let groupedWeekActions = weekActions.groupBy(action => action["done-date"]);
 
-dv.table(
-    ["Action", "Done Date", "Priority", "Projects"],
-    sortedWeekActions.map(p => [
-        "[["+p.file.path+"|"+p.alias[0]+"]]",
-        p["done-date"],
-        p["priority"],
-        p["projects"]
-    ])
-)
+for (let day of groupedWeekActions) {
+    dv.header(3, day.key);
+    dv.table(
+        ["Item", "Priority", "Do Date", "Projects"],
+        day.rows
+            .map(action => [
+                ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
+                action["priority"],
+                action["do-date"],
+                action["projects"]
+            ])
+    );
+    dv.taskList(day.rows.file.tasks.where(t => !t.completed), true)
+}
 ```
+```toggl
+SUMMARY FROM <% tp.date.weekday("YYYY-MM-DD", 1) %> TO <% tp.date.weekday("YYYY-MM-DD", 7) %>
+SORT DESC
+```
+
+## Health Metrics
+```dataviewjs
+const {DvGraphs} = customJS;
+let week = luxon.DateTime.fromISO(this.current().file.name);
+DvGraphs.getDailyMetricGraphs({
+    that: this,
+    start: week.startOf('week'),
+    end: week.endOf('week'),
+    dv,
+    luxon,
+    window
+});
+```
+
+## Daily Thoughts
+
+```dataviewjs
+let week = luxon.DateTime.fromISO(this.current().file.name);
+let weekDays = dv.pages("#day")
+    .where(p => {
+        let day = luxon.DateTime.fromISO(p.file.name);
+        return day >= week.startOf('week') && day <= week.endOf('week')
+    });
+for (let day of weekDays) {
+    dv.header("3", day.file.link);
+    dv.el("p", `![[${day.file.path}#Thoughts]]`);
+}
+```
+### Distilled Thoughts
+
 
 ## I. Pillars
 
@@ -68,7 +100,7 @@ dv.table(
 
 Improvements:: 
 
-TODO: Link Framing
+![[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %># 0. Framing]]
 
 ## II. Pipelines
 
@@ -87,9 +119,42 @@ TODO: Calendar view ideally, otherwise table of upcoming meetings
 
 ### Tracking
 
+- [ ] Review Active [[330 🧗 Projects|🧗 Projects]]
+```dataviewjs
+const {Constants, ObsidianUtils, DvActions} = customJS;
+
+let activeProjects = dv.pages("#project")
+    .where(p => p["status"] == Constants.project.status.active)
+    .sort(p => p["priority"], 'asc');
+
+for (let project of activeProjects) {
+    dv.header(3, project.file.link);
+    let projActions = project.file.inlinks
+        .map(l => dv.page(l))
+        .where(p => p.file.tags.includes("#action"))
+        .where(p => p["projects"].map(p => p.path).includes(project.file.name));
+    let activeActions = ObsidianUtils.activeActions(projActions);
+    if (activeActions.length > 0) {
+        let sortedActions = ObsidianUtils.sortActions(activeActions);
+        dv.table(
+            ["Item", "Priority", "Status", "Do Date"],
+            sortedActions
+                .map(action => [
+                    ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
+                    action["priority"],
+                    action["status"],
+                    action["do-date"]
+                ])
+        );
+    } else {
+        dv.el("b", "Project has no active actions!")
+    }
+    dv.el("p", `![[${project.file.path}#Notes]]`);
+}
+```
+
 - [ ] Review & Update [Azure DevOps](https://msdata.visualstudio.com/Vienna/_queries/query/127dcf1b-6e50-4bf1-bcbc-75a2dd71ea86/)
 - [ ] Review "Waiting" Actions
-- [ ] Review Active [[330 🧗 Projects|🧗 Projects]]
 
 ## III. Review Finished!
 Reviewed:: 
