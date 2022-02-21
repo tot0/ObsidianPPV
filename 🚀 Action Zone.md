@@ -1,7 +1,9 @@
 ---
 tags:
 - dashboard
+title: 🚀 Action Zone
 ---
+
 # 🚀 Action Zone
 
 ```dataviewjs
@@ -104,3 +106,33 @@ for (let day of groupedNext7Days) {
 ```
 
 ## Calendar?
+
+```dataviewjs
+// const { DvActions } = customJS;
+// const { renderCalendar } = app.plugins.plugins["obsidian-full-calendar"];
+// let now = luxon.DateTime.now();
+// let nextDays = luxon.Duration.fromISO("P1W");
+// let actions = DvActions.getActions({
+//     luxon,
+//     dv,
+//     start: now,
+//     end: now.plus(nextDays).endOf('day')
+// }).where(a => a["startTime"] != null && a["endTime"] != null);
+// actions = actions.map(a => {
+//         return {
+//             startDate: a["date"],
+//             startTime: a["startTime"],
+//             endTime: a["endTime"],
+//             id: `${a.file.name}`,
+//             title: a["title"]
+//         }
+//     }).array();
+
+// dv.el("p", actions)
+
+// let calendar = renderCalendar(
+//     this.container,
+//     actions
+// );
+// calendar.render();
+```

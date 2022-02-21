@@ -69,6 +69,10 @@
     {
       "folder": "700 Vaults/Notes",
       "template": "900 Templates/📝 New Note.md"
+    },
+    {
+      "folder": "700 Vaults/420 😶‍🌫️ Seshes",
+      "template": "900 Templates/😶‍🌫️ New Sesh.md"
     }
   ],
   "syntax_highlighting": true,

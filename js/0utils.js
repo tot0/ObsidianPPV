@@ -95,7 +95,18 @@ class ObsidianUtils {
             update,
             newPriority,
         } = args;
+        const {Constants} = customJS;
         await update("Priority", newPriority, action.file.path);
+        if (newPriority === Constants.action.priority.scheduled) {
+            // Scheduled notes are expected to start with two 24 hour times separated by -, 19:00-22:00
+            let startEnd = action.alias[0].substring(0 ,11);
+            let start = startEnd.substring(0, 5);
+            await update("startTime", start, action.file.path);
+            let end = startEnd.substring(6, 11);
+            await update("endTime", end, action.file.path);
+            await update("date", action["do-date"].path, action.file.path);
+            await update("title", action.alias[0].substring(12), action.file.path);
+        }
     }
 
     // Projects

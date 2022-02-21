@@ -12,12 +12,17 @@
 class DvActions {
     getActions(args) {
         const {ObsidianUtils} = customJS;
-        const { luxon, dv } = args;
-        return dv.pages('#action')
+        const { luxon, dv, start, end } = args;
+        let actions = dv.pages('#action')
             .mutate(page => {
                 ObsidianUtils.mutateFieldToDate({luxon, page, field: "do-date"});
-                ObsidianUtils.mutateFieldToDate({luxon, page, field: "done-date"})
+                ObsidianUtils.mutateFieldToDate({luxon, page, field: "done-date"});
             });
+        if (start != null && end != null) {
+            actions = actions.where(p => p["do-date-obj"] >= start && p["do-date-obj"] <= end);
+        }
+
+        return actions;
     }
 
     getDoToday(args) {
@@ -36,9 +41,6 @@ class DvActions {
         const { start, end } = args;
         let actions = this.getActions(args);
         let activeActions = ObsidianUtils.activeActions(actions);
-        if (start != null && end != null) {
-            activeActions = activeActions.where(p => p["do-date-obj"] >= start && p["do-date-obj"] <= end);
-        }
         let activeActionsSorted = ObsidianUtils.sortActions(activeActions);
         return activeActionsSorted;
     }
