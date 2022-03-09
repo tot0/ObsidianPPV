@@ -14,9 +14,9 @@ DvActions.getNewFileButton({
     dv,
     luxon,
     that:this,
-    buttonName:"🗓 New Week",
-    folder:"500 ♽ Cycles/530 🗓 Weeks",
-    nameFormat:"yyyy'-W'WW",
+    buttonName:"📅 New Month",
+    folder:"500 ♽ Cycles/550 📅 Months",
+    nameFormat:"yyyy-MM",
     split:true
 })
 ```
