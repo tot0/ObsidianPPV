@@ -19,7 +19,7 @@ class DvActions {
                 ObsidianUtils.mutateFieldToDate({luxon, page, field: "done-date"});
             });
         if (start != null && end != null) {
-            actions = actions.where(p => p["do-date-obj"] >= start && p["do-date-obj"] <= end);
+            actions = actions.where(p => p["do-date"] >= start && p["do-date"] <= end);
         }
 
         return actions;
@@ -30,8 +30,8 @@ class DvActions {
         const { luxon } = args;
         let actions = this.getActions(args);
         let doToday = ObsidianUtils.activeActions(actions)
-            .where(p => p["do-date-obj"] != null)
-            .where(p => p["do-date-obj"] <= luxon.DateTime.now());
+            .where(p => p["do-date"] != null)
+            .where(p => p["do-date"] <= luxon.DateTime.now());
         let doTodaySorted = ObsidianUtils.sortActions(doToday);
         return doTodaySorted;
     }
