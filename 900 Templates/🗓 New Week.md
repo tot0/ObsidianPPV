@@ -64,7 +64,7 @@ let weekDays = dv.pages("#day")
     .where(p => {
         let day = luxon.DateTime.fromISO(p.file.name);
         return day >= week.startOf('week') && day <= week.endOf('week')
-    });
+    }).sort(d => d.file.name, 'asc');
 for (let day of weekDays) {
     dv.header("3", day.file.link);
     dv.el("p", `![[${day.file.path}#Thoughts]]`);
@@ -79,7 +79,7 @@ for (let day of weekDays) {
 
 ### Reflection
 
-- [ ] Add [[🏆 Accomplishments]]
+- [ ] Add [[710 🏆 Accomplishments]]
 Wins:: 
 - [ ] Add [[😫 Disappointments]]
 Challenges:: 

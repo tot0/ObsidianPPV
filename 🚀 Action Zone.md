@@ -46,17 +46,34 @@ const {DvActions, ObsidianUtils} = customJS;
 // TODO: Split this out and debug priorty ordering.
 //DvActions.getTodayActionTable({app, dv, luxon, that:this})
 
+let today = luxon.DateTime.now();
+let birthdays = dv.pages("#person")
+    .where(p => p["birthday"])
+    .mutate(p => {
+        p["birthday-obj"] = luxon.DateTime.fromISO(p["birthday"].path);
+        p["birthday-this-year-obj"] = p["birthday-obj"].set({year: today.year});
+    })
+    .where(p => p["birthday-this-year-obj"] < today.plus(luxon.Duration.fromISO("P1W")) && p["birthday-this-year-obj"] >= today)
+;
+
 let todayActions = DvActions.getDoToday({luxon, dv});
 dv.table(
     ["Item", "Priority", "Do Date", "Status", "Projects", ""],
-    todayActions.map(action => [
-        ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
-        action["priority"],
-        action["do-date"],
-        action["status"],
-        action["projects"],
-        DvActions.getActionDoneButton({that:this, action, app, luxon})
-    ])
+    birthdays.map(b => [
+        b.file.link,
+        "🟧🎂",
+        `[[${b["birthday-this-year-obj"].toFormat("yyyy-MM-dd")}]]`,
+        
+    ]).concat(
+        todayActions.map(action => [
+            ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
+            action["priority"],
+            action["do-date"],
+            action["status"],
+            action["projects"],
+            DvActions.getActionDoneButton({that:this, action, app, luxon})
+        ])
+    )
 );
 ```
 

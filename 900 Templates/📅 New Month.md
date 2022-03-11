@@ -16,7 +16,7 @@ Theme::
 ## Actions Taken
 
 ```dataviewjs
-const {DvActions, Constants} = customJS;
+const {DvActions, ObsidianUtils} = customJS;
 let month = luxon.DateTime.fromISO(this.current().file.name);
 let monthActions = DvActions.getDoneActions({luxon, dv, start: month.startOf('month'), end: month.endOf('month')});
 monthActions.mutate(action => {
@@ -26,7 +26,7 @@ monthActions.mutate(action => {
 let groupedWeekActions = monthActions.groupBy(action => action["week"]);
 
 for (let week of groupedWeekActions) {
-    dv.header(3, week.key);
+    dv.header(3, week.key.link);
     dv.table(
         ["Item", "Priority", "Do Date", "Projects"],
         week.rows
