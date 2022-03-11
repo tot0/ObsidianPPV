@@ -10,7 +10,19 @@ tags:
 
 ## Review Cycles
 
-### Annual Plan & Insight
+## Weekly Insight
+
+![[530 🗓 Weeks|🗓 Weeks]] 
+
+## Monthly Insight
+
+
+
+## Quarterly & Monthly Insight
+
+![[570 ⌛️ Quarters]]
+
+## Annual Plan & Insight
 
 ```dataviewjs
 const {Constants, ObsidianUtils} = customJS;
@@ -36,15 +48,3 @@ dv.table(
     ])
 );
 ```
-
-## Quarterly & Monthly Insight
-
-![[570 ⌛️ Quarters]]
-
-## Weekly Insight
-
-![[530 🗓 Weeks|🗓 Weeks]] 
-
-## Monthly Insight
-
-

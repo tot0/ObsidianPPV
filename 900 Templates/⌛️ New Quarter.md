@@ -16,7 +16,7 @@ Year:: [[<% tp.date.now("YYYY") %>]]
 
 ## 1. Debrief
 
-- [ ] Review [[🏆 Accomplishments]]
+- [ ] Review [[710 🏆 Accomplishments]]
 ```dataviewjs
 const {Constants, ObsidianUtils} = customJS;
 let accomplishments = dv.pages("#accomplishment");

@@ -47,17 +47,17 @@ class DvActions {
 
     getDoneActions(args) {
         const { ObsidianUtils } = customJS;
-        const { start, end } = args;
-        let actions = this.getActions(args);
+        const { luxon, dv, start, end } = args;
+        let actions = this.getActions({luxon, dv});
         let doneActions = actions
-            .where(p => p["done-date"])
-            .where(p => (p["done-date-obj"] >= start && p["done-date-obj"] <= end));
+            .where(p => p["done-date"] && (p["done-date-obj"] >= start && p["done-date-obj"] <= end));
         //let doneActionsSorted = ObsidianUtils.sortActions(doneActions);
         return doneActions
         //.sort(p => p["projects"][0], 'asc')
         //.sort(p => p["status"], 'asc', ObsidianUtils.compareActionStatus)
         .sort(p => p["alias"][0], 'desc')
         .sort(p => p["do-date-obj"], 'desc')
+        .sort(p => p["done-date-obj"], 'desc')
         .sort(p => p["priority"], 'asc', ObsidianUtils.compareActionPriority);
     }
 
