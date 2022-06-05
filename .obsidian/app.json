@@ -27,13 +27,15 @@
     "editor:toggle-strikethrough",
     "editor:toggle-highlight",
     "editor:toggle-code",
-    "editor:toggle-blockquote",
-    "editor:insert-link",
     "editor:toggle-numbered-list",
     "editor:toggle-keyboard",
-    "editor:configure-toolbar"
+    "editor:configure-toolbar",
+    "switcher:open",
+    "editor:insert-link",
+    "editor:toggle-blockquote"
   ],
-  "fileSortOrder": "alphabeticalReverse",
+  "fileSortOrder": "byModifiedTime",
   "showUnsupportedFiles": true,
-  "lineWrap": true
+  "lineWrap": true,
+  "attachmentFolderPath": "700 Vaults/Resources"
 }

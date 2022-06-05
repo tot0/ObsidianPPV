@@ -61,7 +61,7 @@ dv.table(
     ["Item", "Priority", "Do Date", "Status", "Projects", ""],
     birthdays.map(b => [
         b.file.link,
-        "🟧🎂",
+        "🎂🔜",
         `[[${b["birthday-this-year-obj"].toFormat("yyyy-MM-dd")}]]`,
         
     ]).concat(
@@ -84,6 +84,7 @@ const {DvActions, ObsidianUtils} = customJS;
 // TODO: Split this out and debug priorty ordering.
 //DvActions.getTodayActionTable({app, dv, luxon, that:this})
 let tomorrow = luxon.DateTime.now().plus(luxon.Duration.fromMillis(86400000)); // 1 day in milliseconds
+dv.el("p", "🌄 " + dv.fileLink(tomorrow.toFormat("yyyy-MM-dd")));
 let tomorrowActions = DvActions.getActiveActions({luxon, dv, start: tomorrow.startOf('day'), end: tomorrow.endOf('day')});
 dv.table(
     ["Item", "Priority", "Do Date", "Status", "Projects", ""],
@@ -96,6 +97,11 @@ dv.table(
         DvActions.getActionDoneButton({that:this, action, app, luxon})
     ])
 );
+// Planning Headings from days notes
+for (let action of tomorrowActions) {
+    dv.el("p", action.file.link);
+    dv.el("p", `[[${action.file.path}#${tomorrow.toFormat("yyyy-MM-dd")}]]`)
+}
 ```
 
 ## Next 7 Days

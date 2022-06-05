@@ -277,6 +277,9 @@ class ObsidianUtils {
             split=false,
         } = args;
         try {
+            // No idea why I wanted to try this, it's kinda funny, would need to put some sound design in what would actually be good sound effects for LifeOS/PPV.
+            //let sound = new Audio("https://soundcamp.org/sounds/381/tom/A/low-tom-one-shot-a-key-06-Gjt.mp3");
+            //await sound.play();
             await app.vault.create(filePath, contents);
             const file = app.vault.getAbstractFileByPath(filePath);
             if (split) {
@@ -286,7 +289,7 @@ class ObsidianUtils {
             }
             return file;
         } catch (e) {
-            new console.log(`[createNewNoteInVaultAndOpen] Failed: ${e}`);
+            console.log(`[createNewNoteInVaultAndOpen] Failed: ${e}`);
         }
         return null;
     }

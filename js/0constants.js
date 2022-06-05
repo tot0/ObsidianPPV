@@ -7,7 +7,7 @@ class Constants {
             active: "🟢 Active",
             breakdown: "➗ Breakdown",
             delegate: "🎁 Delegate",
-            nextUp: "🔜 Next Up",
+            nextUp: "🔜 Follow Up",
             done: "☑️ Done",
             removed: "✖️ Removed",
         };

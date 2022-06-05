@@ -1,0 +1,7 @@
+{
+  "defaultMode": "match",
+  "autoPin": "onMove",
+  "triggerDelay": 200,
+  "autoFocus": false,
+  "rollDown": false
+}

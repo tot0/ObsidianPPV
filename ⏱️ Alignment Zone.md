@@ -1,6 +1,7 @@
 ---
 tags:
 - dashboard
+icon: 🧭
 ---
 
 # Insight
@@ -16,7 +17,7 @@ tags:
 
 ## Monthly Insight
 
-
+![[550 📅 Months|📅 Months]]
 
 ## Quarterly & Monthly Insight
 

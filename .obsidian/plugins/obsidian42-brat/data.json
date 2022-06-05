@@ -1,0 +1,17 @@
+{
+  "pluginList": [
+    "RafaelGB/obsidian-db-folder",
+    "nothingislost/obsidian-hover-editor",
+    "davish/obsidian-full-calendar"
+  ],
+  "pluginSubListFrozenVersion": [],
+  "themesList": [],
+  "updateAtStartup": true,
+  "updateThemesAtStartup": false,
+  "ribbonIconEnabled": false,
+  "loggingEnabled": false,
+  "loggingPath": "BRAT-log",
+  "loggingVerboseEnabled": false,
+  "debuggingMode": false,
+  "notificationsEnabled": true
+}

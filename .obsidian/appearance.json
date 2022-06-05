@@ -1,6 +1,10 @@
 {
-  "baseFontSize": 20,
+  "baseFontSize": 22,
   "translucency": false,
   "cssTheme": "Minimal",
-  "enabledCssSnippets": []
+  "enabledCssSnippets": [
+    "CommandCenter",
+    "obsidian.css.live-preview.list-rainbow-indents",
+    "dashboard"
+  ]
 }

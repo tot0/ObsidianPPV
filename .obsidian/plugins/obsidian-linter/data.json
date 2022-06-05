@@ -4,8 +4,8 @@
       "Remove Hashtags from tags in the YAML frontmatter, as they make the tags there invalid.": true
     },
     "Insert YAML attributes": {
-      "Inserts the given YAML attributes into the YAML frontmatter. Put each attribute on a single line.": false,
-      "Text to insert": "aliases: \ntags: "
+      "Inserts the given YAML attributes into the YAML frontmatter. Put each attribute on a single line.": true,
+      "Text to insert": "startTime:\nendTime:\ndate:"
     },
     "YAML Timestamp": {
       "Keep track of the date the file was last edited in the YAML front matter. Gets dates from file metadata.": false,
@@ -57,11 +57,11 @@
       "Replaces three consecutive dots with an ellipsis.": false
     },
     "Trailing spaces": {
-      "Removes extra spaces after every line.": false,
+      "Removes extra spaces after every line.": true,
       "Two Space Linebreak": false
     },
     "Heading blank lines": {
-      "All headings have a blank line both before and after (except where the heading is at the beginning or end of the document).": false,
+      "All headings have a blank line both before and after (except where the heading is at the beginning or end of the document).": true,
       "Bottom": true
     },
     "Paragraph blank lines": {
