@@ -1,0 +1,12 @@
+{
+  "minimal-style@@h4": "1em",
+  "minimal-style@@h3": "1.125em",
+  "minimal-style@@h2": "1.3em",
+  "minimal-style@@h1": "1.5em",
+  "minimal-style@@h5": "0.9em",
+  "minimal-style@@h4-weight": 550,
+  "minimal-style@@h5-weight": 550,
+  "minimal-style@@h6-weight": 500,
+  "minimal-style@@checkbox-shape": "checkbox-circle",
+  "minimal-style@@minimal-strike-lists": false
+}

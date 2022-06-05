@@ -10,6 +10,15 @@
     flex-flow: column wrap;
 }
 
+.is-mobile .mobile-toolbar {
+    position: absolute;
+    z-index: 5;
+}
+
+.AT-always-shown .is-pinned .workspace-drawer-inner {
+    margin-bottom: calc(var(--at-button-height) * var(--at-row-count) + var(--at-spacing));
+}
+
 .AT-multirow.AT-column .mobile-toolbar-options-container { 
     flex-flow: row wrap; 
     overflow-y: auto;
