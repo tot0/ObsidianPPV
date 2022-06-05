@@ -8,24 +8,42 @@ class DvGraphs {
             dv,
             luxon
         } = args;
-        let fromIso = luxon.DateTime.fromISO;
         let days = dv.pages("#day");
         let daysInRange = days.where(p => {
-            let date = fromIso(p.file.name);
+            let date = luxon.DateTime.fromISO(p.file.name);
             return date >= start && date <= end;
         });
         let sortedDays = daysInRange.sort(p => p.file.name);
-        //let last2 = Array.from(daysInRange);
-        //last2.sort((p1, p2) => p1.file.name < p2.file.name ? -1 : 1);
         // Total Sleep Times
+        let maxSleep = 0;
         let totalSleeps = sortedDays.map(p => {
             if (p["Total Sleep"]) {
                 let hm = p["Total Sleep"].split(":");
-                return (parseInt(hm[0]) + parseInt(hm[1]) / 60).toFixed(2)
+                let sleep = (parseInt(hm[0]) + parseInt(hm[1]) / 60).toFixed(2);
+                if (sleep > maxSleep) {
+                    maxSleep = sleep;
+                }
+                return sleep;
             } else {
-                return null
+                return null;
             }
         }).array();
+        // trailing 7 day average line
+        let trailing7Day = this.getTrailingNDayAverage({
+            field_extractor: p => {
+                if (p["Total Sleep"]) {
+                    let hm = p["Total Sleep"].split(":");
+                    return parseInt(hm[0]) + parseInt(hm[1]) / 60;
+                } else {
+                    return null;
+                }
+            },
+            days: days,
+            n: 7,
+            start: start,
+            end: end,
+            luxon: luxon
+        });
         const sleepChartData = {
             type: 'line',
             data: {
@@ -51,6 +69,18 @@ class DvGraphs {
                         'rgba(99, 255, 132, 1)'
                     ],
                     borderWidth: 1
+                },
+                {
+                    label: 'Trailing 7 Day Avg',
+                    data: trailing7Day,
+                    backgroundColor: [
+                        'rgba(255, 255, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 255, 132, 1)'
+                    ],
+                    borderWidth: 1,
+                    //lineTension: 0, 
                 }]
             },
             options: {
@@ -60,21 +90,47 @@ class DvGraphs {
                         beginAtZero: true
                     }
                 },
-                spanGaps: true
+                spanGaps: true,
+                yMax: maxSleep > 9 ? Math.ceil(maxSleep) + 1 : 9,
             }
         }
         
         dv.el("h3", "Total Sleep");
         window.renderChart(sleepChartData, that.container);
         // Out of Bed Times
+        let maxOut = 0;
+        let minOut = 999;
         let times = sortedDays.map(p => {
             if (p["Out of Bed"]) {
                 let hm = p["Out of Bed"].split(":");
-                return (parseInt(hm[0]) + parseInt(hm[1]) / 60).toFixed(2)
+                let out = (parseInt(hm[0]) + parseInt(hm[1]) / 60).toFixed(2);
+                if (out > maxOut) {
+                    maxOut = out;
+                }
+                if (out < minOut) {
+                    minOut = out;
+                }
+                return out;
             } else {
-                return null
+                return null;
             }
         }).array();
+        // trailing 7 day average line
+        let trailing7DayOutOfBed = this.getTrailingNDayAverage({
+            field_extractor: p => {
+                if (p["Out of Bed"]) {
+                    let hm = p["Out of Bed"].split(":");
+                    return parseInt(hm[0]) + parseInt(hm[1]) / 60;
+                } else {
+                    return null;
+                }
+            },
+            days: days,
+            n: 7,
+            start: start,
+            end: end,
+            luxon: luxon
+        });
         let timeChartData = {
             type: 'line',
             data: {
@@ -100,6 +156,17 @@ class DvGraphs {
                         'rgba(99, 255, 132, 1)'
                     ],
                     borderWidth: 1
+                },
+                {
+                    label: 'Trailing 7 Day Avg',
+                    data: trailing7DayOutOfBed,
+                    backgroundColor: [
+                        'rgba(255, 255, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 255, 132, 1)'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -109,7 +176,9 @@ class DvGraphs {
                         beginAtZero: false
                     }
                 },
-                spanGaps: true
+                spanGaps: true,
+                yMax: maxOut > 9 ? Math.ceil(maxOut) : 9,
+                yMin: minOut < 5 ? Math.floor(minOut) : 5,
             }
         }
         dv.el("h3", "Out of Bed");
@@ -119,9 +188,24 @@ class DvGraphs {
             if (p["Weight"]) {
                 return parseFloat(p["Weight"])
             } else {
-                return null
+                return null;
             }
         }).array();
+        // trailing 7 day average line
+        let trailing7DayWeight = this.getTrailingNDayAverage({
+            field_extractor: p => {
+                if (p["Weight"]) {
+                    return parseFloat(p["Weight"])
+                } else {
+                    return null;
+                }
+            },
+            days: days,
+            n: 7,
+            start: start,
+            end: end,
+            luxon: luxon
+        });
         const weightChartData = {
             type: 'line',
             data: {
@@ -147,6 +231,17 @@ class DvGraphs {
                         'rgba(99, 255, 132, 1)'
                     ],
                     borderWidth: 1
+                },
+                {
+                    label: 'Trailing 7 Day Avg',
+                    data: trailing7DayWeight,
+                    backgroundColor: [
+                        'rgba(255, 255, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 255, 132, 1)'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -161,5 +256,44 @@ class DvGraphs {
         }
         dv.el("h3", "Weight");
         window.renderChart(weightChartData, that.container);
+    }
+
+    getTrailingNDayAverage(args) {
+        const {
+            field_extractor,
+            days,
+            n,
+            start,
+            end,
+            luxon
+        } = args;
+        let preN = start.minus(luxon.Duration.fromISO(`P${n}D`));
+        let preNDays = days.where(p => {
+            let date = luxon.DateTime.fromISO(p.file.name);
+            return date >= preN && date <= end;
+        }).map(field_extractor).array();
+
+        let periodLength = Math.ceil(end.diff(start, 'days').toObject().days);
+        let trailingNDayAvg = new Array(periodLength);
+        let lastNsum = 0.0;
+        for (let d = 0; d < n; d++) {
+            if (preNDays[d] == null) {
+                preNDays[d] = d == 0 ? 0.0 : lastNsum / d
+            }
+            lastNsum = lastNsum + preNDays[d];
+        }
+        for (let i = 0; i < trailingNDayAvg.length; i++) {
+            if (i % 3 == 0) {
+                trailingNDayAvg[i] = (lastNsum / n).toFixed(2);
+            } else {
+                trailingNDayAvg[i] = null;
+            }
+
+            if (preNDays[7+i] == null) {
+                preNDays[7+i] = lastNsum / n
+            }
+            lastNsum = lastNsum - preNDays[i] + preNDays[7+i];
+        }
+        return trailingNDayAvg;
     }
 }

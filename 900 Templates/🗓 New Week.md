@@ -1,7 +1,7 @@
 ---
 alias:
-- <% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>
 - 🗓 <% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>
+- <% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>
 tags:
 - week
 ---
@@ -77,6 +77,9 @@ for (let day of weekDays) {
 
 ### [[003 🧭 Guiding Principles|🧭 Guiding Principles]]
 
+### Quarterly Framing
+![[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %># 0. Framing]]
+
 ### Reflection
 
 - [ ] Add [[710 🏆 Accomplishments]]
@@ -100,7 +103,65 @@ dv.table(
 
 Improvements:: 
 
-![[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %># 0. Framing]]
+### People
+```dataviewjs
+let week = luxon.DateTime.fromISO(this.current().file.name);
+let people = dv.pages("#day")
+    .where(p => {
+        let day = luxon.DateTime.fromISO(p.file.name);
+        return day >= week.startOf('week') && day <= week.endOf('week')
+    })
+    .flatMap(d => d.file.inlinks
+        .map(l => dv.page(l))
+        .where(l => l.file.tags.includes("#person"))
+        .map(p => [d, p])
+    )
+    .groupBy(i => i[1].file.name);
+
+
+for (let person of people) {
+    dv.header("3", `[[${person.key}]]`);
+    for (let day of person.rows) {
+        let d = day[0];
+        dv.el("p", `![[${person.key}#`+d.file.name+`]]`);
+    }
+}
+if (people.length == 0) {
+    dv.el("p", "No interactions with people this week...")
+}
+```
+
+#### Intriguing Interactions
+
+
+
+### Information
+```dataviewjs
+let week = luxon.DateTime.fromISO(this.current().file.name);
+let infos = dv.pages("#day")
+    .where(p => {
+        let day = luxon.DateTime.fromISO(p.file.name);
+        return day >= week.startOf('week') && day <= week.endOf('week')
+    })
+    .flatMap(d => d.file.inlinks
+        .map(l => dv.page(l))
+        .where(l => l.file.tags.includes("#information"))
+        .map(p => [d, p])
+    )
+    .groupBy(i => i[1].file.name);
+
+
+for (let info of infos) {
+    dv.header("3", `[[${info.key}]]`);
+    for (let day of info.rows) {
+        let i = day[0];
+        dv.el("p", `[[${info.key}#`+i.file.name+`]]`);
+    }
+}
+if (infos.length == 0) {
+    dv.el("p", "No information came in this week...")
+}
+```
 
 ## II. Pipelines
 
@@ -113,9 +174,7 @@ Improvements::
 ### Calendar
 
 - [ ] Review last two weeks
-TODO: Calendar view ideally, otherwise table of last two weeks meetings (and meetings with notes under a heading linked to a day in this week.)
 - [ ] Review upcoming 3 weeks
-TODO: Calendar view ideally, otherwise table of upcoming meetings
 
 ### Tracking
 

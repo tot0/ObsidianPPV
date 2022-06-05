@@ -43,4 +43,16 @@ dv.table(
         p["Reviewed"]
     ])
 );
+
+
+for (let week of activeWeeks) {
+    dv.header("3", week.file.link);
+    dv.header("4", "Wins");
+    dv.el("p", week["wins"]);
+    dv.header("4", "Challenges");
+    dv.el("p", week["challenges"]);
+    dv.header("4", "Improvements");
+    dv.el("p", week["improvements"]);
+    dv.header("4", `Reviewed: ${week["reviewed"]}`);
+}
 ```
