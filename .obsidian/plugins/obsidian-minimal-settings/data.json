@@ -25,7 +25,7 @@
   "colorfulHeadings": false,
   "minimalIcons": true,
   "colorfulActiveStates": true,
-  "fancyCursor": true,
+  "fancyCursor": false,
   "frostedSidebar": true,
   "trimNames": true,
   "labeledNav": false,

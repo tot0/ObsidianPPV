@@ -250,7 +250,8 @@ class ObsidianUtils {
             luxon
         } = args;
         if (page[field]) {
-            page[field + "-obj"] = luxon.DateTime.fromISO(page[field].path);   
+            // This ridiculous string manipulation is to get only the filename (of #days) removing any `.md` suffix.
+            page[field + "-obj"] = luxon.DateTime.fromISO(page[field].path.split(/.*[\/|\\]/).pop().replace('.md', ''));   
         } else {
             page[field + "-obj"] = null;
         }
