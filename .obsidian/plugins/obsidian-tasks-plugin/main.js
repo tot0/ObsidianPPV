@@ -14245,8 +14245,7 @@ var _Task = class {
     dueDate,
     doneDate,
     recurrence,
-    blockLink,
-    tags
+    blockLink
   }) {
     this._urgency = null;
     this.status = status;
@@ -14257,7 +14256,6 @@ var _Task = class {
     this.sectionIndex = sectionIndex;
     this.originalStatusCharacter = originalStatusCharacter;
     this.precedingHeader = precedingHeader;
-    this.tags = tags;
     this.priority = priority;
     this.startDate = startDate;
     this.scheduledDate = scheduledDate;
@@ -14277,12 +14275,6 @@ var _Task = class {
     if (regexMatch === null) {
       return null;
     }
-    const body = regexMatch[3].trim();
-    const { globalFilter } = getSettings();
-    if (!body.includes(globalFilter)) {
-      return null;
-    }
-    let description = body;
     const indentation = regexMatch[1];
     const statusString = regexMatch[2].toLowerCase();
     let status;
@@ -14293,6 +14285,12 @@ var _Task = class {
       default:
         status = Status.Done;
     }
+    const body = regexMatch[3].trim();
+    const { globalFilter } = getSettings();
+    if (!body.includes(globalFilter)) {
+      return null;
+    }
+    let description = body;
     const blockLinkMatch = description.match(this.blockLinkRegex);
     const blockLink = blockLinkMatch !== null ? blockLinkMatch[0] : "";
     if (blockLink !== "") {
@@ -14305,7 +14303,6 @@ var _Task = class {
     let dueDate = null;
     let doneDate = null;
     let recurrence = null;
-    let tags = [];
     const maxRuns = 7;
     let runs = 0;
     do {
@@ -14363,10 +14360,6 @@ var _Task = class {
       }
       runs++;
     } while (matched && runs <= maxRuns);
-    const hashTagMatch = description.match(this.hashTags);
-    if (hashTagMatch !== null) {
-      tags = hashTagMatch.filter((tag) => tag !== globalFilter).map((tag) => tag.trim());
-    }
     const task = new _Task({
       status,
       description,
@@ -14382,8 +14375,7 @@ var _Task = class {
       dueDate,
       doneDate,
       recurrence,
-      blockLink,
-      tags
+      blockLink
     });
     return task;
   }
@@ -14608,14 +14600,13 @@ var _Task = class {
 var Task = _Task;
 Task.dateFormat = "YYYY-MM-DD";
 Task.taskRegex = /^([\s\t]*)[-*] +\[(.)\] *(.*)/u;
-Task.blockLinkRegex = / \^[a-zA-Z0-9-]+$/u;
 Task.priorityRegex = /([⏫🔼🔽])$/u;
 Task.startDateRegex = /🛫 ?(\d{4}-\d{2}-\d{2})$/u;
 Task.scheduledDateRegex = /[⏳⌛] ?(\d{4}-\d{2}-\d{2})$/u;
 Task.dueDateRegex = /[📅📆🗓] ?(\d{4}-\d{2}-\d{2})$/u;
 Task.doneDateRegex = /✅ ?(\d{4}-\d{2}-\d{2})$/u;
 Task.recurrenceRegex = /🔁 ?([a-zA-Z0-9, !]+)$/iu;
-Task.hashTags = /(^|\s)#[^ !@#$%^&*(),.?":{}|<>]*/g;
+Task.blockLinkRegex = / \^[a-zA-Z0-9-]+$/u;
 
 // src/Cache.ts
 var State;
@@ -15920,8 +15911,7 @@ var taskFromLine = ({ line, path }) => {
       sectionStart: 0,
       sectionIndex: 0,
       precedingHeader: null,
-      blockLink: "",
-      tags: []
+      blockLink: ""
     });
   }
   const indentation = nonTaskMatch[1];
@@ -15948,8 +15938,7 @@ var taskFromLine = ({ line, path }) => {
     recurrence: null,
     sectionStart: 0,
     sectionIndex: 0,
-    precedingHeader: null,
-    tags: []
+    precedingHeader: null
   });
 };
 
@@ -16221,375 +16210,6 @@ var import_obsidian7 = __toModule(require("obsidian"));
 
 // src/Query.ts
 var chrono2 = __toModule(require_dist());
-
-// src/Query/GroupHeading.ts
-var GroupHeading = class {
-  constructor(nestingLevel, name) {
-    this.nestingLevel = nestingLevel;
-    this.name = name;
-  }
-};
-
-// src/Query/GroupHeadings.ts
-var GroupHeadings = class {
-  constructor(groupedTasks) {
-    this.lastHeadingAtLevel = new Array();
-    const firstGroup = groupedTasks.keys().next().value;
-    const groupCount = firstGroup.length;
-    for (let i = 0; i < groupCount; i++) {
-      this.lastHeadingAtLevel.push("");
-    }
-  }
-  getHeadingsForTaskGroup(groupNames) {
-    const headingsForGroup = new Array();
-    for (let level = 0; level < groupNames.length; level++) {
-      const group = groupNames[level];
-      if (group != this.lastHeadingAtLevel[level]) {
-        headingsForGroup.push(new GroupHeading(level, group));
-        for (let j = level; j < groupNames.length; j++) {
-          this.lastHeadingAtLevel[j] = "";
-        }
-        this.lastHeadingAtLevel[level] = group;
-      }
-    }
-    return headingsForGroup;
-  }
-};
-
-// src/Query/IntermediateTaskGroups.ts
-var IntermediateTaskGroupsStorage = class extends Map {
-};
-var IntermediateTaskGroups = class {
-  constructor(grouping, tasks2) {
-    this.groups = new IntermediateTaskGroupsStorage();
-    if (grouping.length === 0 || tasks2.length === 0) {
-      this.groups.set([], tasks2);
-    } else {
-      const groupers = Group.getGroupersForAllQueryGroupings(grouping);
-      for (const task of tasks2) {
-        const groupNames = Group.getGroupNamesForTask(groupers, task);
-        this.addTask(groupNames, task);
-      }
-      this.groups = this.getSortedGroups();
-    }
-  }
-  addTask(groupNames, task) {
-    const groupForNames = this.getOrCreateGroupForGroupNames(groupNames);
-    groupForNames == null ? void 0 : groupForNames.push(task);
-  }
-  getOrCreateGroupForGroupNames(newGroupNames) {
-    for (const [groupNames, taskGroup2] of this.groups) {
-      if (JSON.stringify(groupNames) === JSON.stringify(newGroupNames)) {
-        return taskGroup2;
-      }
-    }
-    const taskGroup = [];
-    this.groups.set(newGroupNames, taskGroup);
-    return taskGroup;
-  }
-  getSortedGroups() {
-    return new IntermediateTaskGroupsStorage([...this.groups.entries()].sort());
-  }
-};
-
-// src/Query/TaskGroup.ts
-var TaskGroup = class {
-  constructor(groups, groupHeadings, tasks2) {
-    this.groups = groups;
-    this.groupHeadings = groupHeadings;
-    this.tasks = tasks2;
-  }
-  tasksAsStringOfLines() {
-    let output = "";
-    for (const task of this.tasks) {
-      output += task.toFileLineString() + "\n";
-    }
-    return output;
-  }
-  toString() {
-    let output = "\n";
-    output += `Group names: [${this.groups}]
-`;
-    for (const heading of this.groupHeadings) {
-      const headingPrefix = "#".repeat(4 + heading.nestingLevel);
-      output += `${headingPrefix} ${heading.name}
-`;
-    }
-    output += this.tasksAsStringOfLines();
-    return output;
-  }
-};
-
-// src/Query/TaskGroups.ts
-var TaskGroups = class {
-  constructor(groups, tasks2) {
-    this._groups = new Array();
-    const initialGroups = new IntermediateTaskGroups(groups, tasks2);
-    this.addTasks(initialGroups);
-  }
-  get groups() {
-    return this._groups;
-  }
-  totalTasksCount() {
-    let totalTasksCount = 0;
-    for (const group of this.groups) {
-      totalTasksCount += group.tasks.length;
-    }
-    return totalTasksCount;
-  }
-  toString() {
-    let output = "";
-    for (const taskGroup of this.groups) {
-      output += taskGroup.toString();
-      output += "\n---\n";
-    }
-    const totalTasksCount = this.totalTasksCount();
-    output += `
-${totalTasksCount} tasks
-`;
-    return output;
-  }
-  addTasks(initialGroups) {
-    const grouper = new GroupHeadings(initialGroups.groups);
-    for (const [groups, tasks2] of initialGroups.groups) {
-      const groupHeadings = grouper.getHeadingsForTaskGroup(groups);
-      const taskGroup = new TaskGroup(groups, groupHeadings, tasks2);
-      this.add(taskGroup);
-    }
-  }
-  add(taskGroup) {
-    this._groups.push(taskGroup);
-  }
-};
-
-// src/Query/Group.ts
-var _Group = class {
-  static by(grouping, tasks2) {
-    return new TaskGroups(grouping, tasks2);
-  }
-  static getGroupersForAllQueryGroupings(grouping) {
-    const groupers = [];
-    for (const { property } of grouping) {
-      const comparator = _Group.groupers[property];
-      groupers.push(comparator);
-    }
-    return groupers;
-  }
-  static getGroupNamesForTask(groupers, task) {
-    const groupNames = [];
-    for (const grouper of groupers) {
-      const groupName = grouper(task);
-      groupNames.push(groupName);
-    }
-    return groupNames;
-  }
-  static getGroupNameForTask(property, task) {
-    const grouper = _Group.groupers[property];
-    return grouper(task);
-  }
-  static groupByPath(task) {
-    return task.path.replace(".md", "");
-  }
-  static groupByFolder(task) {
-    const path = task.path;
-    const fileNameWithExtension = task.filename + ".md";
-    const folder = path.substring(0, path.lastIndexOf(fileNameWithExtension));
-    if (folder === "") {
-      return "/";
-    }
-    return folder;
-  }
-  static groupByFileName(task) {
-    const filename = task.filename;
-    if (filename === null) {
-      return "Unknown Location";
-    }
-    return filename;
-  }
-  static groupByBacklink(task) {
-    const linkText = task.getLinkText({ isFilenameUnique: true });
-    if (linkText === null) {
-      return "Unknown Location";
-    }
-    return linkText;
-  }
-  static groupByStatus(task) {
-    return task.status;
-  }
-  static groupByHeading(task) {
-    if (task.precedingHeader === null || task.precedingHeader.length === 0) {
-      return "(No heading)";
-    }
-    return task.precedingHeader;
-  }
-};
-var Group = _Group;
-Group.groupers = {
-  backlink: _Group.groupByBacklink,
-  filename: _Group.groupByFileName,
-  folder: _Group.groupByFolder,
-  heading: _Group.groupByHeading,
-  path: _Group.groupByPath,
-  status: _Group.groupByStatus
-};
-
-// src/Sort.ts
-var _Sort = class {
-  static by(query, tasks2) {
-    const defaultComparators = [
-      _Sort.compareByUrgency,
-      _Sort.compareByStatus,
-      _Sort.compareByDueDate,
-      _Sort.compareByPriority,
-      _Sort.compareByPath
-    ];
-    const userComparators = [];
-    for (const { property, reverse, propertyInstance } of query.sorting) {
-      const comparator = _Sort.comparators[property];
-      userComparators.push(reverse ? _Sort.makeReversedComparator(comparator) : comparator);
-      if (property === "tag") {
-        _Sort.tagPropertyInstance = propertyInstance;
-      }
-    }
-    return tasks2.sort(_Sort.makeCompositeComparator([
-      ...userComparators,
-      ...defaultComparators
-    ]));
-  }
-  static makeReversedComparator(comparator) {
-    return (a, b) => comparator(a, b) * -1;
-  }
-  static makeCompositeComparator(comparators) {
-    return (a, b) => {
-      for (const comparator of comparators) {
-        const result = comparator(a, b);
-        if (result !== 0) {
-          return result;
-        }
-      }
-      return 0;
-    };
-  }
-  static compareByUrgency(a, b) {
-    return b.urgency - a.urgency;
-  }
-  static compareByStatus(a, b) {
-    if (a.status < b.status) {
-      return 1;
-    } else if (a.status > b.status) {
-      return -1;
-    } else {
-      return 0;
-    }
-  }
-  static compareByPriority(a, b) {
-    return a.priority.localeCompare(b.priority);
-  }
-  static compareByStartDate(a, b) {
-    return _Sort.compareByDate(a.startDate, b.startDate);
-  }
-  static compareByScheduledDate(a, b) {
-    return _Sort.compareByDate(a.scheduledDate, b.scheduledDate);
-  }
-  static compareByDueDate(a, b) {
-    return _Sort.compareByDate(a.dueDate, b.dueDate);
-  }
-  static compareByDoneDate(a, b) {
-    return _Sort.compareByDate(a.doneDate, b.doneDate);
-  }
-  static compareByTag(a, b) {
-    if (a.tags.length === 0 && b.tags.length === 0) {
-      return 0;
-    } else if (a.tags.length === 0) {
-      return 1;
-    } else if (b.tags.length === 0) {
-      return -1;
-    }
-    const tagInstanceToSortBy = _Sort.tagPropertyInstance - 1;
-    if (a.tags.length < _Sort.tagPropertyInstance && b.tags.length >= _Sort.tagPropertyInstance) {
-      return 1;
-    } else if (b.tags.length < _Sort.tagPropertyInstance && a.tags.length >= _Sort.tagPropertyInstance) {
-      return -1;
-    } else if (a.tags.length < _Sort.tagPropertyInstance && b.tags.length < _Sort.tagPropertyInstance) {
-      return 0;
-    }
-    if (a.tags[tagInstanceToSortBy] < b.tags[tagInstanceToSortBy]) {
-      return -1;
-    } else if (a.tags[tagInstanceToSortBy] > b.tags[tagInstanceToSortBy]) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-  static compareByDate(a, b) {
-    if (a !== null && b === null) {
-      return -1;
-    } else if (a === null && b !== null) {
-      return 1;
-    } else if (a !== null && b !== null) {
-      if (a.isAfter(b)) {
-        return 1;
-      } else if (a.isBefore(b)) {
-        return -1;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
-    }
-  }
-  static compareByPath(a, b) {
-    if (a.path < b.path) {
-      return -1;
-    } else if (a.path > b.path) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-  static compareByDescription(a, b) {
-    return _Sort.cleanDescription(a.description).localeCompare(_Sort.cleanDescription(b.description));
-  }
-  static cleanDescription(description) {
-    const globalFilter = getSettings().globalFilter;
-    description = description.replace(globalFilter, "").trim();
-    const startsWithLinkRegex = /^\[\[?([^\]]*)\]/;
-    const linkRegexMatch = description.match(startsWithLinkRegex);
-    if (linkRegexMatch !== null) {
-      const innerLinkText = linkRegexMatch[1];
-      description = innerLinkText.substring(innerLinkText.indexOf("|") + 1) + description.replace(startsWithLinkRegex, "");
-    }
-    const startsWithItalicOrBoldRegex = /^\*\*?([^*]*)\*/;
-    const italicBoldRegexMatch = description.match(startsWithItalicOrBoldRegex);
-    if (italicBoldRegexMatch !== null) {
-      const innerItalicBoldText = italicBoldRegexMatch[1];
-      description = innerItalicBoldText + description.replace(startsWithLinkRegex, "");
-    }
-    const startsWithHighlightRegex = /^==?([^=]*)==/;
-    const highlightRegexMatch = description.match(startsWithHighlightRegex);
-    if (highlightRegexMatch !== null) {
-      const innerHighlightsText = highlightRegexMatch[1];
-      description = innerHighlightsText + description.replace(startsWithHighlightRegex, "");
-    }
-    return description;
-  }
-};
-var Sort = _Sort;
-Sort.tagPropertyInstance = 1;
-Sort.comparators = {
-  urgency: _Sort.compareByUrgency,
-  description: _Sort.compareByDescription,
-  priority: _Sort.compareByPriority,
-  start: _Sort.compareByStartDate,
-  scheduled: _Sort.compareByScheduledDate,
-  due: _Sort.compareByDueDate,
-  done: _Sort.compareByDoneDate,
-  path: _Sort.compareByPath,
-  status: _Sort.compareByStatus,
-  tag: _Sort.compareByTag
-};
-
-// src/Query.ts
 var Query = class {
   constructor({ source }) {
     this._limit = void 0;
@@ -16597,26 +16217,20 @@ var Query = class {
     this._filters = [];
     this._error = void 0;
     this._sorting = [];
-    this._grouping = [];
     this.priorityRegexp = /^priority (is )?(above|below)? ?(low|none|medium|high)/;
     this.happensRegexp = /^happens (before|after|on)? ?(.*)/;
     this.noStartString = "no start date";
-    this.hasStartString = "has start date";
     this.startRegexp = /^starts (before|after|on)? ?(.*)/;
     this.noScheduledString = "no scheduled date";
-    this.hasScheduledString = "has scheduled date";
     this.scheduledRegexp = /^scheduled (before|after|on)? ?(.*)/;
     this.noDueString = "no due date";
-    this.hasDueString = "has due date";
     this.dueRegexp = /^due (before|after|on)? ?(.*)/;
     this.doneString = "done";
     this.notDoneString = "not done";
     this.doneRegexp = /^done (before|after|on)? ?(.*)/;
     this.pathRegexp = /^path (includes|does not include) (.*)/;
     this.descriptionRegexp = /^description (includes|does not include) (.*)/;
-    this.tagRegexp = /^(tag|tags) (includes|does not include|include|do not include) (.*)/;
-    this.sortByRegexp = /^sort by (urgency|status|priority|start|scheduled|due|done|path|description|tag)( reverse)?[\s]*(\d+)?/;
-    this.groupByRegexp = /^group by (backlink|filename|folder|heading|path|status)/;
+    this.sortByRegexp = /^sort by (urgency|status|priority|start|scheduled|due|done|path|description)( reverse)?/;
     this.headingRegexp = /^heading (includes|does not include) (.*)/;
     this.hideOptionsRegexp = /^hide (task count|backlink|priority|start date|scheduled date|done date|due date|recurrence rule|edit button)/;
     this.shortModeRegexp = /^short/;
@@ -16653,15 +16267,6 @@ var Query = class {
         case line === this.noDueString:
           this._filters.push((task) => task.dueDate === null);
           break;
-        case line === this.hasStartString:
-          this._filters.push((task) => task.startDate !== null);
-          break;
-        case line === this.hasScheduledString:
-          this._filters.push((task) => task.scheduledDate !== null);
-          break;
-        case line === this.hasDueString:
-          this._filters.push((task) => task.dueDate !== null);
-          break;
         case this.shortModeRegexp.test(line):
           this._layoutOptions.shortMode = true;
           break;
@@ -16689,9 +16294,6 @@ var Query = class {
         case this.descriptionRegexp.test(line):
           this.parseDescriptionFilter({ line });
           break;
-        case this.tagRegexp.test(line):
-          this.parseTagFilter({ line });
-          break;
         case this.headingRegexp.test(line):
           this.parseHeadingFilter({ line });
           break;
@@ -16701,16 +16303,13 @@ var Query = class {
         case this.sortByRegexp.test(line):
           this.parseSortBy({ line });
           break;
-        case this.groupByRegexp.test(line):
-          this.parseGroupBy({ line });
-          break;
         case this.hideOptionsRegexp.test(line):
           this.parseHideOptions({ line });
           break;
         case this.commentRegexp.test(line):
           break;
         default:
-          this._error = `do not understand query: ${line}`;
+          this._error = "do not understand query";
       }
     });
   }
@@ -16726,18 +16325,8 @@ var Query = class {
   get sorting() {
     return this._sorting;
   }
-  get grouping() {
-    return this._grouping;
-  }
   get error() {
     return this._error;
-  }
-  applyQueryToTasks(tasks2) {
-    this.filters.forEach((filter) => {
-      tasks2 = tasks2.filter(filter);
-    });
-    const tasksSortedLimited = Sort.by(this, tasks2).slice(0, this.limit);
-    return Group.by(this.grouping, tasksSortedLimited);
   }
   parseHideOptions({ line }) {
     const hideOptionsMatch = line.match(this.hideOptionsRegexp);
@@ -16815,7 +16404,7 @@ var Query = class {
   parseHappensFilter({ line }) {
     const happensMatch = line.match(this.happensRegexp);
     if (happensMatch !== null) {
-      const filterDate = Query.parseDate(happensMatch[2]);
+      const filterDate = this.parseDate(happensMatch[2]);
       if (!filterDate.isValid()) {
         this._error = "do not understand happens date";
         return;
@@ -16842,7 +16431,7 @@ var Query = class {
   parseStartFilter({ line }) {
     const startMatch = line.match(this.startRegexp);
     if (startMatch !== null) {
-      const filterDate = Query.parseDate(startMatch[2]);
+      const filterDate = this.parseDate(startMatch[2]);
       if (!filterDate.isValid()) {
         this._error = "do not understand start date";
         return;
@@ -16863,7 +16452,7 @@ var Query = class {
   parseScheduledFilter({ line }) {
     const scheduledMatch = line.match(this.scheduledRegexp);
     if (scheduledMatch !== null) {
-      const filterDate = Query.parseDate(scheduledMatch[2]);
+      const filterDate = this.parseDate(scheduledMatch[2]);
       if (!filterDate.isValid()) {
         this._error = "do not understand scheduled date";
       }
@@ -16883,7 +16472,7 @@ var Query = class {
   parseDueFilter({ line }) {
     const dueMatch = line.match(this.dueRegexp);
     if (dueMatch !== null) {
-      const filterDate = Query.parseDate(dueMatch[2]);
+      const filterDate = this.parseDate(dueMatch[2]);
       if (!filterDate.isValid()) {
         this._error = "do not understand due date";
         return;
@@ -16904,7 +16493,7 @@ var Query = class {
   parseDoneFilter({ line }) {
     const doneMatch = line.match(this.doneRegexp);
     if (doneMatch !== null) {
-      const filterDate = Query.parseDate(doneMatch[2]);
+      const filterDate = this.parseDate(doneMatch[2]);
       if (!filterDate.isValid()) {
         this._error = "do not understand done date";
         return;
@@ -16925,30 +16514,14 @@ var Query = class {
     if (pathMatch !== null) {
       const filterMethod = pathMatch[1];
       if (filterMethod === "includes") {
-        this._filters.push((task) => Query.stringIncludesCaseInsensitive(task.path, pathMatch[2]));
+        this._filters.push((task) => this.stringIncludesCaseInsensitive(task.path, pathMatch[2]));
       } else if (pathMatch[1] === "does not include") {
-        this._filters.push((task) => !Query.stringIncludesCaseInsensitive(task.path, pathMatch[2]));
+        this._filters.push((task) => !this.stringIncludesCaseInsensitive(task.path, pathMatch[2]));
       } else {
         this._error = "do not understand query filter (path)";
       }
     } else {
       this._error = "do not understand query filter (path)";
-    }
-  }
-  parseTagFilter({ line }) {
-    const tagMatch = line.match(this.tagRegexp);
-    if (tagMatch !== null) {
-      const filterMethod = tagMatch[2];
-      const search = tagMatch[3].replace(/^#/, "");
-      if (filterMethod === "include" || filterMethod === "includes") {
-        this._filters.push((task) => task.tags.find((tag) => tag.toLowerCase().includes(search.toLowerCase())) !== void 0);
-      } else if (tagMatch[2] === "do not include" || tagMatch[2] === "does not include") {
-        this._filters.push((task) => task.tags.find((tag) => tag.toLowerCase().includes(search.toLowerCase())) == void 0);
-      } else {
-        this._error = "do not understand query filter (tag/tags)";
-      }
-    } else {
-      this._error = "do not understand query filter (tag/tags)";
     }
   }
   parseDescriptionFilter({ line }) {
@@ -16957,9 +16530,9 @@ var Query = class {
       const filterMethod = descriptionMatch[1];
       const globalFilter = getSettings().globalFilter;
       if (filterMethod === "includes") {
-        this._filters.push((task) => Query.stringIncludesCaseInsensitive(task.description.replace(globalFilter, "").trim(), descriptionMatch[2]));
+        this._filters.push((task) => this.stringIncludesCaseInsensitive(task.description.replace(globalFilter, "").trim(), descriptionMatch[2]));
       } else if (descriptionMatch[1] === "does not include") {
-        this._filters.push((task) => !Query.stringIncludesCaseInsensitive(task.description.replace(globalFilter, "").trim(), descriptionMatch[2]));
+        this._filters.push((task) => !this.stringIncludesCaseInsensitive(task.description.replace(globalFilter, "").trim(), descriptionMatch[2]));
       } else {
         this._error = "do not understand query filter (description)";
       }
@@ -16972,9 +16545,9 @@ var Query = class {
     if (headingMatch !== null) {
       const filterMethod = headingMatch[1].toLowerCase();
       if (filterMethod === "includes") {
-        this._filters.push((task) => task.precedingHeader !== null && Query.stringIncludesCaseInsensitive(task.precedingHeader, headingMatch[2]));
+        this._filters.push((task) => task.precedingHeader !== null && this.stringIncludesCaseInsensitive(task.precedingHeader, headingMatch[2]));
       } else if (headingMatch[1] === "does not include") {
-        this._filters.push((task) => task.precedingHeader === null || !Query.stringIncludesCaseInsensitive(task.precedingHeader, headingMatch[2]));
+        this._filters.push((task) => task.precedingHeader === null || !this.stringIncludesCaseInsensitive(task.precedingHeader, headingMatch[2]));
       } else {
         this._error = "do not understand query filter (heading)";
       }
@@ -16985,7 +16558,8 @@ var Query = class {
   parseLimit({ line }) {
     const limitMatch = line.match(this.limitRegexp);
     if (limitMatch !== null) {
-      this._limit = Number.parseInt(limitMatch[2], 10);
+      const limit = Number.parseInt(limitMatch[2], 10);
+      this._limit = limit;
     } else {
       this._error = "do not understand query limit";
     }
@@ -16995,29 +16569,145 @@ var Query = class {
     if (fieldMatch !== null) {
       this._sorting.push({
         property: fieldMatch[1],
-        reverse: !!fieldMatch[2],
-        propertyInstance: isNaN(+fieldMatch[3]) ? 1 : +fieldMatch[3]
+        reverse: !!fieldMatch[2]
       });
     } else {
       this._error = "do not understand query sorting";
     }
   }
-  parseGroupBy({ line }) {
-    const fieldMatch = line.match(this.groupByRegexp);
-    if (fieldMatch !== null) {
-      this._grouping.push({
-        property: fieldMatch[1]
-      });
-    } else {
-      this._error = "do not understand query grouping";
-    }
-  }
-  static parseDate(input) {
+  parseDate(input) {
     return window.moment(chrono2.parseDate(input)).startOf("day");
   }
-  static stringIncludesCaseInsensitive(haystack, needle) {
+  stringIncludesCaseInsensitive(haystack, needle) {
     return haystack.toLocaleLowerCase().includes(needle.toLocaleLowerCase());
   }
+};
+
+// src/Sort.ts
+var _Sort = class {
+  static by(query, tasks2) {
+    const defaultComparators = [
+      _Sort.compareByUrgency,
+      _Sort.compareByStatus,
+      _Sort.compareByDueDate,
+      _Sort.compareByPriority,
+      _Sort.compareByPath
+    ];
+    const userComparators = [];
+    for (const { property, reverse } of query.sorting) {
+      const comparator = _Sort.comparators[property];
+      userComparators.push(reverse ? _Sort.makeReversedComparator(comparator) : comparator);
+    }
+    return tasks2.sort(_Sort.makeCompositeComparator([
+      ...userComparators,
+      ...defaultComparators
+    ]));
+  }
+  static makeReversedComparator(comparator) {
+    return (a, b) => comparator(a, b) * -1;
+  }
+  static makeCompositeComparator(comparators) {
+    return (a, b) => {
+      for (const comparator of comparators) {
+        const result = comparator(a, b);
+        if (result !== 0) {
+          return result;
+        }
+      }
+      return 0;
+    };
+  }
+  static compareByUrgency(a, b) {
+    return b.urgency - a.urgency;
+  }
+  static compareByStatus(a, b) {
+    if (a.status < b.status) {
+      return 1;
+    } else if (a.status > b.status) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+  static compareByPriority(a, b) {
+    return a.priority.localeCompare(b.priority);
+  }
+  static compareByStartDate(a, b) {
+    return _Sort.compareByDate(a.startDate, b.startDate);
+  }
+  static compareByScheduledDate(a, b) {
+    return _Sort.compareByDate(a.scheduledDate, b.scheduledDate);
+  }
+  static compareByDueDate(a, b) {
+    return _Sort.compareByDate(a.dueDate, b.dueDate);
+  }
+  static compareByDoneDate(a, b) {
+    return _Sort.compareByDate(a.doneDate, b.doneDate);
+  }
+  static compareByDate(a, b) {
+    if (a !== null && b === null) {
+      return -1;
+    } else if (a === null && b !== null) {
+      return 1;
+    } else if (a !== null && b !== null) {
+      if (a.isAfter(b)) {
+        return 1;
+      } else if (a.isBefore(b)) {
+        return -1;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+  static compareByPath(a, b) {
+    if (a.path < b.path) {
+      return -1;
+    } else if (a.path > b.path) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+  static compareByDescription(a, b) {
+    return _Sort.cleanDescription(a.description).localeCompare(_Sort.cleanDescription(b.description));
+  }
+  static cleanDescription(description) {
+    const globalFilter = getSettings().globalFilter;
+    description = description.replace(globalFilter, "").trim();
+    const startsWithLinkRegex = /^\[\[?([^\]]*)\]/;
+    const linkRegexMatch = description.match(startsWithLinkRegex);
+    if (linkRegexMatch !== null) {
+      const innerLinkText = linkRegexMatch[1];
+      description = innerLinkText.substring(innerLinkText.indexOf("|") + 1) + description.replace(startsWithLinkRegex, "");
+    }
+    const startsWithItalicOrBoldRegex = /^\*\*?([^*]*)\*/;
+    const italicBoldRegexMatch = description.match(startsWithItalicOrBoldRegex);
+    if (italicBoldRegexMatch !== null) {
+      const innerItalicBoldText = italicBoldRegexMatch[1];
+      description = innerItalicBoldText + description.replace(startsWithLinkRegex, "");
+    }
+    const startsWithHighlightRegex = /^==?([^=]*)==/;
+    const highlightRegexMatch = description.match(startsWithHighlightRegex);
+    if (highlightRegexMatch !== null) {
+      const innerHighlightsText = highlightRegexMatch[1];
+      description = innerHighlightsText + description.replace(startsWithHighlightRegex, "");
+    }
+    return description;
+  }
+};
+var Sort = _Sort;
+Sort.comparators = {
+  urgency: _Sort.compareByUrgency,
+  description: _Sort.compareByDescription,
+  priority: _Sort.compareByPriority,
+  start: _Sort.compareByStartDate,
+  scheduled: _Sort.compareByScheduledDate,
+  due: _Sort.compareByDueDate,
+  done: _Sort.compareByDoneDate,
+  path: _Sort.compareByPath,
+  status: _Sort.compareByStatus
 };
 
 // src/QueryRenderer.ts
@@ -17081,17 +16771,13 @@ var QueryRenderChild = class extends import_obsidian7.MarkdownRenderChild {
       var _a;
       const content = this.containerEl.createEl("div");
       if (state === State.Warm && this.query.error === void 0) {
-        const tasksSortedLimitedGrouped = this.query.applyQueryToTasks(tasks2);
-        for (const group of tasksSortedLimitedGrouped.groups) {
-          QueryRenderChild.addGroupHeadings(content, group.groupHeadings);
-          const { taskList } = yield this.createTasksList({
-            tasks: group.tasks,
-            content
-          });
-          content.appendChild(taskList);
-        }
-        const totalTasksCount = tasksSortedLimitedGrouped.totalTasksCount();
-        this.addTaskCount(content, totalTasksCount);
+        const tasksSortedLimited = this.applyQueryToTasks(tasks2);
+        const { taskList, tasksCount } = yield this.createTasksList({
+          tasks: tasksSortedLimited,
+          content
+        });
+        content.appendChild(taskList);
+        this.addTaskCount(content, tasksCount);
       } else if (this.query.error !== void 0) {
         content.setText(`Tasks query: ${this.query.error}`);
       } else {
@@ -17135,6 +16821,12 @@ var QueryRenderChild = class extends import_obsidian7.MarkdownRenderChild {
       return { taskList, tasksCount };
     });
   }
+  applyQueryToTasks(tasks2) {
+    this.query.filters.forEach((filter) => {
+      tasks2 = tasks2.filter(filter);
+    });
+    return Sort.by(this.query, tasks2).slice(0, this.query.limit);
+  }
   addEditButton(postInfo, task) {
     const editTaskPencil = postInfo.createEl("a", {
       cls: "tasks-edit"
@@ -17154,28 +16846,6 @@ var QueryRenderChild = class extends import_obsidian7.MarkdownRenderChild {
       });
       taskModal.open();
     });
-  }
-  static addGroupHeadings(content, groupHeadings) {
-    for (const heading of groupHeadings) {
-      QueryRenderChild.addGroupHeading(content, heading);
-    }
-  }
-  static addGroupHeading(content, group) {
-    let header;
-    if (group.nestingLevel === 0) {
-      header = content.createEl("h4", {
-        cls: "tasks-group-heading"
-      });
-    } else if (group.nestingLevel === 1) {
-      header = content.createEl("h5", {
-        cls: "tasks-group-heading"
-      });
-    } else {
-      header = content.createEl("h6", {
-        cls: "tasks-group-heading"
-      });
-    }
-    header.appendText(group.name);
   }
   addBacklinks(postInfo, task, shortMode, isFilenameUnique) {
     var _a;
