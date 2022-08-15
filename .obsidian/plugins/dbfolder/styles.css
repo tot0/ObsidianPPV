@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 .database-plugin__html {
   box-sizing: border-box;
 }
@@ -91,7 +92,18 @@
   background-color: var(--background-primary);
   box-sizing: border-box;
   flex: 1 1 auto;
-  text-align: justify;
+  text-align: -webkit-center;
+  vertical-align: middle;
+}
+/** children of data-input fills parent div*/
+.data-input > * {
+  border: none;
+  height: 100%;
+  width: 100%;
+}
+
+.data-input > *:focus {
+  outline: none;
 }
 
 .data-input * {
@@ -102,15 +114,19 @@
   background-color: var(--background-secondary);
 }
 
-.data-input:focus {
-  outline: none;
+.database-plugin__td span.is-loaded,
+span.database-plugin__calendar,
+div.database-plugin__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.data-input-checkbox {
+.database-plugin__checkbox {
   place-self: center;
 }
 
-.data-input-checkbox input[type="checkbox"] {
+.database-plugin__checkbox input[type="checkbox"] {
   /* Add if not using autoprefixer */
   -webkit-appearance: none;
   /* Remove most all native input styles */
@@ -130,7 +146,8 @@
   display: grid;
   place-content: center;
 }
-.data-input-checkbox input[type="checkbox"]::before {
+
+.database-plugin__checkbox input[type="checkbox"]::before {
   content: "";
   width: 0.65em;
   height: 0.65em;
@@ -143,25 +160,30 @@
   background-color: CanvasText;
 }
 
-.data-input-checkbox input[type="checkbox"]:checked {
-  background-color: currentColor;
+.database-plugin__checkbox input[type="checkbox"]:checked {
+  background-color: var(--text-accent);
 }
 
-.data-input-checkbox input[type="checkbox"]:checked::before {
+.database-plugin__checkbox input[type="checkbox"]:checked::before {
   transform: scale(1);
 }
 
-.data-input-checkbox input[type="checkbox"]:focus {
+.database-plugin__checkbox input[type="checkbox"]:focus {
   outline: max(2px, 0.15em) solid currentColor;
   outline-offset: max(2px, 0.15em);
 }
 
 .database-plugin__md_cell {
-  padding: 0.5rem;
+  vertical-align: middle;
 }
 
 .database-plugin__md_cell p {
   display: inline;
+}
+
+.database-plugin__markdown-preview-view {
+  padding: 0;
+  height: fit-content;
 }
 
 .svg-icon-sm svg {
@@ -194,6 +216,33 @@
   user-select: none;
 }
 
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: var(--background-modifier-border);
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+}
+
+.resizer.isResizing {
+  background: var(--background-modifier-error);
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .resizer {
+    opacity: 0;
+  }
+
+  *:hover > .resizer {
+    opacity: 1;
+  }
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -219,6 +268,14 @@
   align-items: center;
 }
 
+.workspace-leaf-content[data-type="database-plugin"] .view-content {
+  padding: 0;
+}
+
+.database-plugin__tr {
+  display: table-row;
+}
+
 .database-plugin__tr:last-child .database-plugin__td {
   border-bottom: 0;
 }
@@ -226,24 +283,26 @@
 .database-plugin__add-row {
   color: var(--text-accent);
   padding: 0.5rem;
-  display: flex;
   align-items: center;
   font-size: 0.875rem;
   cursor: pointer;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background-primary);
 }
 
-.database-plugin__add-row:hover {
+.database-plugin__add-row .svg-icon:hover {
   background-color: var(--background-secondary);
   color: var(--text-accent-hover);
+  padding: 0.3rem;
 }
 
 .database-plugin__add-row .database-plugin__td {
   border: none;
   background-color: transparent;
   color: var(--text-muted);
-
-  flex-direction: row;
-  align-items: center;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .database-plugin__th {
@@ -252,6 +311,7 @@
   font-size: 0.875rem;
   cursor: pointer;
   background-color: var(--background-primary);
+  display: table-cell;
 }
 
 .database-plugin__th:hover {
@@ -274,7 +334,7 @@
   align-items: stretch;
   justify-content: center;
   padding: 0;
-  display: flex;
+  display: table-cell;
   padding: 0.5rem;
   flex-direction: column;
 }
@@ -284,10 +344,38 @@
   align-items: center;
 }
 
+.database-plugin__cell_size_compact .database-plugin__tags-container {
+  flex-wrap: nowrap;
+}
+
+.database-plugin__cell_size_compact .data-input {
+  white-space: nowrap;
+}
+
+.database-plugin__cell_size_compact .database-plugin__td {
+  padding: 0;
+}
+
+.database-plugin__cell_size_normal .database-plugin__td {
+  padding: 0.3rem;
+}
+
+.database-plugin__cell_size_wide .database-plugin__td {
+  padding: 0.6rem;
+}
+
+.database-plugin__sticky_first_column .database-plugin__td:first-child,
+.database-plugin__sticky_first_column .database-plugin__th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
 .database-plugin__table {
   border-spacing: 0;
   border-bottom: 1px solid var(--background-modifier-border);
-  display: "flex";
+  display: table;
+  height: 1px; /** Hack to prevent collapsing of table cells */
 }
 
 .database-plugin__th:last-child {
@@ -309,29 +397,83 @@
 
 .database-plugin__header-group,
 .database-plugin__header {
-  justify-content: space-between;
+  justify-content: flex-start;
   background-color: var(--background-secondary);
 }
 
+.database-plugin__sticky-level-1 {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.database-plugin__sticky-level-2 {
+  position: sticky;
+  top: 4rem;
+  z-index: 2;
+}
+
+.database-plugin__table-header-group {
+  border-top: 1px solid var(--background-modifier-border);
+  display: table-header-group;
+}
+
 .database-plugin__navbar {
-  display: flex;
   flex: 1 0 auto;
+  background-color: var(--background-secondary);
+}
+
+.database-plugin__padding-left {
+  padding-left: 0.5rem;
 }
 
 .database-plugin__calendar {
   align-self: center;
 }
 
-.database-plugin__relationship {
+.database-plugin__relationship,
+.react-select__option {
+  color: rgb(66, 66, 66);
   box-sizing: border-box;
   font-weight: 400;
   padding: 2px 6px;
-  border-radius: 4;
+  border-radius: 4px;
   display: inline-block;
+  white-space: nowrap;
 }
 
-.text-align-right {
-  text-align: right;
+.react-select__option + .react-select__option {
+  margin-top: 10px;
+}
+
+.react-select__option,
+.react-select__multi-value {
+  background-color: #e3e3e3;
+  color: var(--text-normal);
+}
+
+.react-select__menu .react-select__menu-list {
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.react-select__value-container .react-select__input-container {
+  color: var(--text-normal);
+}
+
+.database-plugin__tags {
+  background-color: var(--background-primary);
+}
+
+.database-plugin__tags-container {
+  gap: 0.3rem;
+}
+
+span.text-align-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .cell-padding {
@@ -396,6 +538,10 @@
 */
 .configuration-section-container-developer {
   background-color: var(--background-modifier-error);
+}
+
+.configuration-section-container-columns-template {
+  background-color: var(--background-modifier-box-shadow);
 }
 
 /*
@@ -507,10 +653,10 @@
 .react-datepicker-wrapper input[type="text"],
 .react-datepicker-wrapper input[type="text"]:focus {
   border: none;
-  font-family: "Inter", sans-serif;
   font-size: var(--font-size-normal);
   padding: 0.5rem;
   color: var(--text-normal);
+  background-color: var(--background-primary);
   font-size: 1rem;
   resize: none;
   box-sizing: border-box;
@@ -524,8 +670,8 @@
 .react-datepicker {
   font-size: 0.8rem;
   background-color: var(--background-primary);
-  color: var(--background-primary-alt);
-  border: 1px solid var(--background-secondary);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
   border-radius: 0.3rem;
   display: inline-block;
   position: relative;
@@ -589,7 +735,7 @@
 
 .react-datepicker__header {
   text-align: center;
-  background-color: var(--background-secondary-alt);
+  background-color: var(--background-secondary);
   border-bottom: 1px solid var(--background-secondary);
   border-top-left-radius: 0.3rem;
   padding: 8px 0;
@@ -624,7 +770,7 @@
 .react-datepicker-time__header,
 .react-datepicker-year-header {
   margin-top: 0;
-  color: #000;
+  color: var(--text-normal);
   font-weight: bold;
   font-size: 0.944rem;
 }
@@ -852,6 +998,7 @@
   li.react-datepicker__time-list-item {
   height: 30px;
   padding: 5px 10px;
+  color: var(--text-normal);
   white-space: nowrap;
 }
 
@@ -870,7 +1017,7 @@
   ul.react-datepicker__time-list
   li.react-datepicker__time-list-item--selected {
   background-color: #216ba5;
-  color: white;
+  color: var(--text-normal);
   font-weight: bold;
 }
 
@@ -929,7 +1076,7 @@
 .react-datepicker__day-name,
 .react-datepicker__day,
 .react-datepicker__time-name {
-  color: #000;
+  color: var(--text-normal);
   display: inline-block;
   width: 1.7rem;
   line-height: 1.7rem;
@@ -1085,7 +1232,7 @@
 .react-datepicker__month--selecting-range
   .react-datepicker__year-text--in-range:not(.react-datepicker__day--in-selecting-range, .react-datepicker__month-text--in-selecting-range, .react-datepicker__quarter-text--in-selecting-range, .react-datepicker__year-text--in-selecting-range) {
   background-color: #f0f0f0;
-  color: #000;
+  color: var(--text-normal);
 }
 
 .react-datepicker__day--disabled,
@@ -1292,7 +1439,7 @@
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--background-primary);
   left: 0;
   top: 0;
   justify-content: center;

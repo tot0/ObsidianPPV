@@ -15,7 +15,7 @@ tags:
 const {DvGraphs} = customJS;
 DvGraphs.getDailyMetricGraphs({
     that: this,
-    start: this.luxon.DateTime.now() - this.luxon.Duration.fromISO("P2W"),
+    start: this.luxon.DateTime.now().minus(this.luxon.Duration.fromISO("P2W")),
     end: this.luxon.DateTime.now(),
     dv,
     luxon,

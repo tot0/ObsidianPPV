@@ -21,8 +21,18 @@ Year:: [[<% tp.date.now("YYYY") %>]]
 const {Constants, ObsidianUtils} = customJS;
 let accomplishments = dv.pages("#accomplishment");
 let activeAccomplishments = accomplishments
-    .where(p => p["quarter"])
-    .where(p => p["quarter"].path == this.current().file.name);
+    .where(p => p["Quarter"])
+    .where(p => dv.array(p["Quarter"])
+                  .where(q => {
+                      let page = dv.page(q);
+                      if (page === undefined) {
+                          return q.path.contains(this.current().file.name);
+                      } else {
+                          return page.file.name == this.current().file.name;
+                      }
+                   }).length > 0
+    )
+    .sort(p => p["Day"], 'asc');
 dv.table(
     ["Accomplishment", "Quarter", "Month", "Week", "Day"],
     activeAccomplishments.map(p => [
@@ -40,8 +50,18 @@ dv.table(
 const {Constants, ObsidianUtils} = customJS;
 let disappointments = dv.pages("#disappointment");
 let activeDisappointments = disappointments
-    .where(p => p["quarter"])
-    .where(p => p["quarter"].path == this.current().file.name);
+    .where(p => p["Quarter"])
+    .where(p => dv.array(p["Quarter"])
+                  .where(q => {
+                      let page = dv.page(q);
+                      if (page === undefined) {
+                          return q.path.contains(this.current().file.name);
+                      } else {
+                          return page.file.name == this.current().file.name;
+                      }
+                   }).length > 0
+    )
+    .sort(p => p["Day"], 'asc');
 dv.table(
     ["Disappointment", "Quarter", "Month", "Week", "Day"],
     activeDisappointments.map(p => [
@@ -55,7 +75,9 @@ dv.table(
 ```
 
 Working::
+
 Not Working:: 
+
 Changes::
 
 Playlist:: 

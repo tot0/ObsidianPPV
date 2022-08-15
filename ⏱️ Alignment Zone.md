@@ -45,7 +45,7 @@ dv.table(
         p.file.link,
         p["objectives"].map(p => p.file.link),
         p["outcomes"].map(p => p.file.link),
-        p["status"]
+        p["Status"]
     ])
 );
 ```

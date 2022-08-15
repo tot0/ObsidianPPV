@@ -1,7 +1,7 @@
 ---
 tags:
 - dashboard
-title: 🚀 Action Zone
+title: "\U0001F680 Action Zone"
 ---
 
 # 🚀 Action Zone
@@ -41,7 +41,7 @@ DvActions.getNewFileButton({
 
 ## Today
 
- ```dataviewjs
+```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
 // TODO: Split this out and debug priorty ordering.
 //DvActions.getTodayActionTable({app, dv, luxon, that:this})
@@ -57,8 +57,16 @@ let birthdays = dv.pages("#person")
 ;
 
 let todayActions = DvActions.getDoToday({luxon, dv});
+//dv.el("p", todayActions.length);
 dv.table(
-    ["Item", "Priority", "Do Date", "Status", "Projects", ""],
+    [
+        "Item",
+        "Priority",
+        "Do Date",
+        "Status",
+        //"Projects",
+        ""
+    ],
     birthdays.map(b => [
         b.file.link,
         "🎂🔜",
@@ -67,14 +75,15 @@ dv.table(
     ]).concat(
         todayActions.map(action => [
             ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
-            action["priority"],
+            action["Priority"],
             action["do-date"],
-            action["status"],
-            action["projects"],
+            action["Status"],
+            //action["Projects"],
             DvActions.getActionDoneButton({that:this, action, app, luxon})
         ])
     )
 );
+//dv.taskList(todayActions.file.tasks.where(t => !t.completed), true);
 ```
 
 ## Tomorrow

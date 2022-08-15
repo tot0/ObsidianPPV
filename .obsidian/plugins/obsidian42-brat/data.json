@@ -1,5 +1,6 @@
 {
   "pluginList": [
+    "EasyChris/obsidian-to-notion",
     "RafaelGB/obsidian-db-folder",
     "nothingislost/obsidian-hover-editor",
     "davish/obsidian-full-calendar"

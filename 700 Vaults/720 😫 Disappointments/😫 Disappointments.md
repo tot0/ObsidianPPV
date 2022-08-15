@@ -32,7 +32,7 @@ let activeDisappointments = disappointments
 dv.table(
     ["Disappointment", "Quarter", "Month", "Week", "Day"],
     activeDisappointments.map(p => [
-        "[["+p.file.path+"|"+p.alias[0]+"]]",
+        `[[${p.file.path}|${p.alias[0]}]]`,
         p["quarter"],
         p["month"],
         p["week"],

@@ -91,6 +91,7 @@ class ObsidianUtils {
 
     async updateActionPriority(args) {
         const {
+            dv,
             action,
             update,
             newPriority,
@@ -104,7 +105,12 @@ class ObsidianUtils {
             await update("startTime", start, action.file.path);
             let end = startEnd.substring(6, 11);
             await update("endTime", end, action.file.path);
-            await update("date", action["do-date"].path, action.file.path);
+            let doDate = dv.page(action["do-date"]);
+            if (doDate === undefined) {
+                await update("date", action["do-date"].path, action.file.path);
+            } else {
+                await update("date", dv.page(action["do-date"]).file.name, action.file.path);
+            }
             await update("title", action.alias[0].substring(12), action.file.path);
         }
     }
