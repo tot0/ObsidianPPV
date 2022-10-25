@@ -55,7 +55,7 @@ title: "\U0001F5A5️ Command Center"
 - [[🔮 Knowledge Vault]]
 - [[Notes]]
 - [[Media Vault]]
-- [[People]]
+- [[👤 People]]
 
 
 <iframe height=200 width=50% frameborder=0 src="https://indify.co/widgets/live/progressBar/sklvo3i3O3EOjQrtRhiL" ></iframe>
