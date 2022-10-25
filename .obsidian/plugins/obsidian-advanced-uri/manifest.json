@@ -4,11 +4,7 @@
     "description": "Advanced modes for Obsidian URI",
     "isDesktopOnly": false,
     "js": "main.js",
-<<<<<<< HEAD
-    "version": "1.21.1",
-=======
-    "version": "1.24.0",
->>>>>>> 6b03af7 (Way too many random updates.)
+    "version": "1.28.0",
     "author": "Vinzent",
     "authorUrl": "https://github.com/Vinzent03"
 }

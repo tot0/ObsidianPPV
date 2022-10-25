@@ -15390,7 +15390,7 @@ var Upload2Notion = class {
       const __content = yamlObj.__content;
       const file2Block = (0, import_martian.markdownToBlocks)(__content);
       const frontmasster = yield (_a = app.metadataCache.getFileCache(nowFile)) == null ? void 0 : _a.frontmatter;
-      const notionID = frontmasster ? frontmasster.notionId : null;
+      const notionID = frontmasster ? frontmasster.notionID : null;
       if (notionID) {
         res = yield this.updatePage(notionID, title, file2Block);
       } else {

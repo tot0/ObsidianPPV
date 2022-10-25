@@ -16,7 +16,6 @@
   "calendar",
   "nldates-obsidian",
   "obsidian-sortable",
-  "sliding-panes-obsidian",
   "folder-note-plugin",
   "obsidian-linter",
   "obsidian-full-calendar",
@@ -29,7 +28,6 @@
   "customizable-page-header-buttons",
   "juggl",
   "obsidian-banners",
-  "periodic-notes",
   "obsidian-tasks-plugin",
   "open-vscode",
   "obsidian-advanced-uri",
@@ -38,5 +36,10 @@
   "dbfolder",
   "file-explorer-markdown-titles",
   "obsidian-to-notion",
-  "pinboard-sync"
+  "pinboard-sync",
+  "table-editor-obsidian",
+  "hotkey-helper",
+  "pane-relief",
+  "periodic-notes",
+  "obsidian-languagetool-plugin"
 ]
