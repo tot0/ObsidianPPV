@@ -49,6 +49,24 @@ for (let week of groupedWeekActions) {
     dv.taskList(week.rows.file.tasks.where(t => !t.completed), true)
 }
 ```
+
+```dataviewjs
+let month = this.current().file.name;
+const startDateOfMonth = luxon.DateTime.fromISO(this.current().file.name);
+const endDateOfMonth = startDateOfMonth.endOf('month');
+//dv.el("p", startDateOfQuarter);
+//dv.el("p", endDateOfQuarter);
+let currDate = new Date(startDateOfMonth);
+let numOfWorkingDays = 0;
+while(currDate < endDateOfMonth){
+  currDate.setDate(currDate.getDate()+1);
+  var day=currDate.getDay();
+  if(day!=0&&day!=6){numOfWorkingDays++;}
+ }
+dv.el("p", "Working Days in " + month + ": " + numOfWorkingDays);
+let numWorkingHours = numOfWorkingDays * 8
+dv.el("p", "Working Hours in " + month + ": " + numWorkingHours);
+```
 ```toggl
 SUMMARY FROM 2022-04-01 TO 2022-04-30
 SORT DESC
@@ -246,7 +264,8 @@ for (let project of activeProjects) {
     let projActions = project.file.inlinks
         .map(l => dv.page(l))
         .where(p => p.file.tags.includes("#action"))
-        .where(p => p["projects"].map(p => p.path).includes(project.file.name));
+        .where(p => p["Projects"])
+        .where(p => dv.array(p["Projects"]).where(proj => dv.page(proj).file.name == project.file.name).length > 0);
     let activeActions = ObsidianUtils.activeActions(projActions);
     if (activeActions.length > 0) {
         let sortedActions = ObsidianUtils.sortActions(activeActions);

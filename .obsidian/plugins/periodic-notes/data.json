@@ -1,10 +1,10 @@
 {
-  "showGettingStartedBanner": true,
+  "showGettingStartedBanner": false,
   "hasMigratedDailyNoteSettings": true,
   "hasMigratedWeeklyNoteSettings": false,
   "daily": {
     "folder": "500 ♽ Cycles/520 🌄 Days",
-    "template": "Templates/🌄 New Day",
+    "template": "900 Templates/🌄 New Day.md",
     "enabled": true
   },
   "weekly": {

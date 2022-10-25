@@ -37,3 +37,4 @@ dv.el("p", `[[${now.toFormat("yyyy-MM")}]]`)
 dv.el("p", `[[${now.toFormat("yyyy'Q'q")}]]`)
 dv.el("p", `[[${now.toFormat("yyyy")}]]`)
 ```
+

@@ -91,6 +91,7 @@ class ObsidianUtils {
 
     async updateActionPriority(args) {
         const {
+            dv,
             action,
             update,
             newPriority,
@@ -104,7 +105,12 @@ class ObsidianUtils {
             await update("startTime", start, action.file.path);
             let end = startEnd.substring(6, 11);
             await update("endTime", end, action.file.path);
-            await update("date", action["do-date"].path, action.file.path);
+            let doDate = dv.page(action["do-date"]);
+            if (doDate === undefined) {
+                await update("date", action["do-date"].path, action.file.path);
+            } else {
+                await update("date", dv.page(action["do-date"]).file.name, action.file.path);
+            }
             await update("title", action.alias[0].substring(12), action.file.path);
         }
     }
@@ -231,7 +237,7 @@ class ObsidianUtils {
         } = args;
         const {Constants, ObsidianUtils} = customJS;
         if (newStatus === Constants.objective.status.completed) {
-            await ObsidianUtils.updateOutcomeStatusDone({objective, update, luxon});
+            await ObsidianUtils.updateObjectiveStatusCompleted({objective, update, luxon});
         } else {
             await update("Status", newStatus, objective.file.path);
             await update("finish", "", objective.file.path);
@@ -250,7 +256,9 @@ class ObsidianUtils {
             luxon
         } = args;
         if (page[field]) {
-            page[field + "-obj"] = luxon.DateTime.fromISO(page[field].path);   
+            // Find YYYY-MM-DD format in path, sometimes links are short path (just filename), sometimes they're full path, this generalizes
+            const date = page[field].path.match(/\d{4}-\d{2}-\d{2}/);
+            page[field + "-obj"] = luxon.DateTime.fromISO(date);   
         } else {
             page[field + "-obj"] = null;
         }

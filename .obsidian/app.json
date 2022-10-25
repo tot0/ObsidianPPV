@@ -34,8 +34,9 @@
     "editor:insert-link",
     "editor:toggle-blockquote"
   ],
-  "fileSortOrder": "byModifiedTime",
+  "fileSortOrder": "alphabeticalReverse",
   "showUnsupportedFiles": true,
   "lineWrap": true,
-  "attachmentFolderPath": "700 Vaults/Resources"
+  "attachmentFolderPath": "700 Vaults/Resources",
+  "showInlineTitle": false
 }

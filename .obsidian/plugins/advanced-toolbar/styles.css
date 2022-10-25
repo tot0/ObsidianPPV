@@ -1,77 +1,85 @@
 /*Variables*/
 .body {
-    --at-button-height: 48;
-    --at-row-count: 2;
-    --at-row-count: 0;
+  --at-button-height: 48;
+  --at-row-count: 2;
+  --at-row-count: 0;
 }
 
 /*Multi Row Toolbar*/
 .AT-multirow.AT-row .mobile-toolbar-options-container {
-    flex-flow: column wrap;
+  flex-flow: column wrap;
 }
 
 .is-mobile .mobile-toolbar {
-    position: absolute;
-    z-index: 5;
+  position: absolute;
+  z-index: 5;
 }
 
 .AT-always-shown .is-pinned .workspace-drawer-inner {
-    margin-bottom: calc(var(--at-button-height) * var(--at-row-count) + var(--at-spacing));
+  margin-bottom: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  );
 }
 
-.AT-multirow.AT-column .mobile-toolbar-options-container { 
-    flex-flow: row wrap; 
-    overflow-y: auto;
+.AT-multirow.AT-column .mobile-toolbar-options-container {
+  flex-flow: row wrap;
+  overflow-y: auto;
 }
 
 .mobile-toolbar-option {
-    height: var(--at-button-height);
-    min-width: var(--at-button-width);
+  height: var(--at-button-height);
+  min-width: var(--at-button-width);
 }
 
 .AT-multirow .mobile-toolbar {
-    height: calc(var(--at-button-height) * var(--at-row-count) + var(--at-spacing)) !important;   
+  height: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  ) !important;
 }
 
 .AT-multirow .mobile-toolbar-options-container {
-    height: calc(var(--at-button-height) * var(--at-row-count) + var(--at-spacing)) !important;
+  height: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  ) !important;
 }
 
 .AT-no-toolbar .mobile-toolbar {
-    display: none;
+  display: none;
 }
 
 /*Icon Picker*/
 .AT-icon {
-    transform: translateY(3px);
-    margin-right: 8px;
+  transform: translateY(3px);
+  margin-right: 8px;
 }
 
-.AT-icon-container{
-    display: flex;
+.AT-icon-container {
+  display: flex;
 }
 
 .AT-settings-icon {
-    height: 20px;
+  height: 20px;
 }
 
 /*Additional Stuff*/
 span.setting-item.AT-warning {
-    text-align: center;
+  text-align: center;
 }
 
 .setting-item.AT-extra > .setting-item-info {
-    opacity: 0.65;
+  opacity: 0.65;
 }
 
-.is-mobile .setting-item.AT-extra > .setting-item-control{
-    justify-content: center !important;
+.is-mobile .setting-item.AT-extra > .setting-item-control {
+  justify-content: center !important;
 }
 
-a[href="https://www.buymeacoffee.com/phibr0"] > img {
-    height: 2.2em;
+a[href="https://ko-fi.com/phibr0"] > img
+{
+  height: 3em;
 }
 
-a[href="https://www.buymeacoffee.com/phibr0"]{
-    transform: translate(0, 5%);
+a[href="https://ko-fi.com/phibr0"]
+{
+  transform: translate(0, 5%);
 }

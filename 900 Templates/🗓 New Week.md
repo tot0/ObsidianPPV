@@ -83,8 +83,11 @@ for (let day of weekDays) {
 ### Reflection
 
 - [ ] Add [[710 🏆 Accomplishments]]
+
 Wins:: 
+
 - [ ] Add [[😫 Disappointments]]
+
 Challenges:: 
 
 ```dataviewjs
@@ -191,7 +194,8 @@ for (let project of activeProjects) {
     let projActions = project.file.inlinks
         .map(l => dv.page(l))
         .where(p => p.file.tags.includes("#action"))
-        .where(p => p["projects"].map(p => p.path).includes(project.file.name));
+        .where(p => p["Projects"])
+        .where(p => dv.array(p["Projects"]).where(proj => dv.page(proj).file.name == project.file.name).length > 0);
     let activeActions = ObsidianUtils.activeActions(projActions);
     if (activeActions.length > 0) {
         let sortedActions = ObsidianUtils.sortActions(activeActions);

@@ -58,7 +58,7 @@ class DvActions {
         .sort(p => p["alias"][0], 'desc')
         .sort(p => p["do-date-obj"], 'desc')
         .sort(p => p["done-date-obj"], 'desc')
-        .sort(p => p["priority"], 'asc', ObsidianUtils.compareActionPriority);
+        .sort(p => p["Priority"], 'asc', ObsidianUtils.compareActionPriority);
     }
 
     getTodayActionTable(args) {
@@ -80,10 +80,10 @@ class DvActions {
             todayActions.map(action => {
                 return [
                     ObsidianUtils.getDisplayLink(action.file.name, action.alias[0].substring(0, 40)),
-                    action["priority"],
+                    action["Priority"],
                     action["do-date"],
-                    action["status"],
-                    action["projects"],
+                    action["Status"],
+                    action["Projects"],
                     this.getActionDoneButton({that, action, app, luxon}),
                 ]
             })
@@ -126,6 +126,7 @@ class DvActions {
             that,
             action,
             app,
+            dv,
         } = args;
         const { metaedit, buttons } = app.plugins.plugins
         const { update } = metaedit.api
@@ -143,6 +144,7 @@ class DvActions {
                 clickOverride: {
                     click: ObsidianUtils.updateActionPriority,
                     params: [{
+                        dv,
                         action,
                         update,
                         newPriority: priority,

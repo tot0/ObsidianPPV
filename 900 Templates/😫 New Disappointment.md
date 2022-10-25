@@ -1,4 +1,6 @@
 ---
+alias:
+- 😫 New Disappointment
 tags:
 - disappointment
 ---

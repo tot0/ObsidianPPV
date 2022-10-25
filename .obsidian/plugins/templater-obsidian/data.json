@@ -51,7 +51,7 @@
       "template": "900 Templates/🌄 New Day.md"
     },
     {
-      "folder": "700 Vaults/People",
+      "folder": "700 Vaults/👤 People",
       "template": "900 Templates/👤 New Person.md"
     },
     {
@@ -81,5 +81,6 @@
   ],
   "startup_templates": [
     ""
-  ]
+  ],
+  "enable_ribbon_icon": true
 }

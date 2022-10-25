@@ -36,7 +36,7 @@ let recentMonths = months
 dv.table(
     ["Month", "Wins", "Challenges", "Improvements", "Reviewed"],
     recentMonths.map(p => [
-        p.file.link,
+        `[[${p.file.name}|${p.alias[0]}]]`,
         p["wins"],
         p["challenges"],
         p["improvements"],

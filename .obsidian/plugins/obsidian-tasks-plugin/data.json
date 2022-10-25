@@ -1,0 +1,8 @@
+{
+  "globalFilter": "",
+  "removeGlobalFilter": false,
+  "setDoneDate": true,
+  "autoSuggestInEditor": true,
+  "autoSuggestMinMatch": 3,
+  "autoSuggestMaxItems": 6
+}
