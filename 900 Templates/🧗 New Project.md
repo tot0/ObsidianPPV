@@ -20,7 +20,7 @@ Quarter::
 Status:: 
 ```dataviewjs
 const {DvActions} = customJS
-DvActions.getProjectStatusButtons({app, dv, luxon, that:this, project:dv.current()})
+DvActions.getProjectStatusButtons({app, dv, luxon:dv.luxon, that:this, project:dv.current()})
 ```
 
 ## Why?
@@ -32,7 +32,7 @@ const {DvActions} = customJS
 DvActions.getNewActionButtonContextAware({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     project:dv.current(),
     split:true

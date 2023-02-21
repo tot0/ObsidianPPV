@@ -42,7 +42,7 @@ Weight::
 
  ```dataviewjs
 const {DvActions} = customJS
-DvActions.getTodayActionTable({app, dv, luxon, that:this})
+DvActions.getTodayActionTable({app, dv, luxon:dv.luxon, that:this})
 ```
 
 ## [[☯️ Mental Clarity]]
@@ -63,6 +63,31 @@ let sortedActions = ObsidianUtils.sortActions(todayActions);
 dv.table(
 	["Action", "Priority", "Do Date", "Status"],
     sortedActions.map(p => ["[["+p.file.name+ "|"+p.alias[0].substring(0, 60)+"]]" , p["Priority"], p["Do Date"], p["Status"]]));
+```
+
+```dataviewjs
+let actionsWithInlinks = this.current().file.inlinks
+    .map(l => dv.page(l))
+    .where(l => l.file.tags.includes("#action"))
+    .where(l => {
+        let skip = false;
+        for (let bullet of l.file.lists) {
+            if (bullet.text.contains(this.current().file.name) && !(bullet.link.subpath === this.current().file.name)) {
+                // dv.el("p", Object.keys(bullet));
+                // dv.el("p", bullet.text);
+                // dv.el("p", Object.entries(bullet.link));
+                skip = true;
+            }
+        }
+        return !skip;
+    });
+for (let action of actionsWithInlinks) {
+    dv.header("3", `[[${action.file.name}|${action.file.aliases[0]}]]`);
+    dv.el("p", `![[${action.file.name}#${this.current().file.name}]]`);
+}
+if (actionsWithInlinks.length == 0) {
+    dv.el("p", "No actions with today as a heading")
+}
 ```
 
 Improvements:: 

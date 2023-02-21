@@ -1239,7 +1239,7 @@ var require_lodash = __commonJS({
           if (typeof func != "function") {
             throw new TypeError2(FUNC_ERROR_TEXT);
           }
-          return setTimeout2(function() {
+          return setTimeout(function() {
             func.apply(undefined2, args);
           }, wait);
         }
@@ -3048,7 +3048,7 @@ var require_lodash = __commonJS({
           return object[key];
         }
         var setData = shortOut(baseSetData);
-        var setTimeout2 = ctxSetTimeout || function(func, wait) {
+        var setTimeout = ctxSetTimeout || function(func, wait) {
           return root.setTimeout(func, wait);
         };
         var setToString = shortOut(baseSetToString);
@@ -3840,7 +3840,7 @@ var require_lodash = __commonJS({
           }
           function leadingEdge(time) {
             lastInvokeTime = time;
-            timerId = setTimeout2(timerExpired, wait);
+            timerId = setTimeout(timerExpired, wait);
             return leading ? invokeFunc(time) : result2;
           }
           function remainingWait(time) {
@@ -3856,7 +3856,7 @@ var require_lodash = __commonJS({
             if (shouldInvoke(time)) {
               return trailingEdge(time);
             }
-            timerId = setTimeout2(timerExpired, remainingWait(time));
+            timerId = setTimeout(timerExpired, remainingWait(time));
           }
           function trailingEdge(time) {
             timerId = undefined2;
@@ -3887,12 +3887,12 @@ var require_lodash = __commonJS({
               }
               if (maxing) {
                 clearTimeout(timerId);
-                timerId = setTimeout2(timerExpired, wait);
+                timerId = setTimeout(timerExpired, wait);
                 return invokeFunc(lastCallTime);
               }
             }
             if (timerId === undefined2) {
-              timerId = setTimeout2(timerExpired, wait);
+              timerId = setTimeout(timerExpired, wait);
             }
             return result2;
           }
@@ -5583,7 +5583,6 @@ __export(exports, {
   default: () => DragNDropPlugin
 });
 var import_obsidian = __toModule(require("obsidian"));
-var import_gutter = __toModule(require("@codemirror/gutter"));
 var import_lodash = __toModule(require_lodash());
 
 // node_modules/bail/index.js
@@ -10925,7 +10924,7 @@ var visit = function(tree, test, visitor, reverse) {
 };
 
 // main.ts
-var import_rangeset = __toModule(require("@codemirror/rangeset"));
+var import_state = __toModule(require("@codemirror/state"));
 var import_view = __toModule(require("@codemirror/view"));
 var dragHighlight = import_view.Decoration.line({ attributes: { class: "drag-over" } });
 var dragDestination = import_view.Decoration.line({ attributes: { class: "drag-last" } });
@@ -10950,26 +10949,7 @@ function findListItem(text3, line, itemType) {
 function generateId() {
   return Math.random().toString(36).substr(2, 6);
 }
-function copyItemLinesToDragContainer(app, line, drag) {
-  const view = app.workspace.getActiveViewOfType(import_obsidian.MarkdownView);
-  if (!view || !view.editor)
-    return;
-  const targetEditor = view.editor.cm;
-  const lines = getAllLinesForCurrentItem(app, line - 1, targetEditor);
-  const container = document.createElement("div");
-  container.className = "markdown-source-view mod-cm6 cm-content dnd-drag-container cm-s-obsidian";
-  const cmContent = document.querySelector(".cm-contentContainer .cm-content");
-  if (cmContent)
-    container.setAttribute("style", cmContent.getAttribute("style"));
-  lines.forEach(({ lineDom }) => container.appendChild(lineDom.cloneNode(true)));
-  drag.appendChild(container);
-  document.body.classList.add("dnd-render-draggable-content");
-  setTimeout(() => {
-    container.classList.add("dnd-drag-container-inactive");
-    document.body.classList.remove("dnd-render-draggable-content");
-  }, 0);
-}
-var dragHandle = (line, app) => new class extends import_gutter.GutterMarker {
+var dragHandle = (line, app) => new class extends import_view.GutterMarker {
   toDOM(editor) {
     const fileCache = findFile(app, editor);
     const block = ((fileCache == null ? void 0 : fileCache.sections) || []).find((s) => findSection(s, line - 1));
@@ -10981,12 +10961,11 @@ var dragHandle = (line, app) => new class extends import_gutter.GutterMarker {
     drag.setAttribute("draggable", "true");
     drag.addEventListener("dragstart", (e) => {
       e.dataTransfer.setData("line", `${line}`);
-      copyItemLinesToDragContainer(app, line, drag);
     });
     return drag;
   }
 }();
-var dragLineMarker = (app) => (0, import_gutter.gutter)({
+var dragLineMarker = (app) => (0, import_view.gutter)({
   lineMarker(view, line) {
     return line.from == line.to ? null : dragHandle(view.state.doc.lineAt(line.from).number, app);
   }
@@ -11132,14 +11111,14 @@ function getAllLinesForCurrentItem(app, lineNumber, targetEditor, targetLine) {
 }
 function emptyRange() {
   return {
-    current: new import_rangeset.RangeSetBuilder().finish(),
-    parent: new import_rangeset.RangeSetBuilder().finish()
+    current: new import_state.RangeSetBuilder().finish(),
+    parent: new import_state.RangeSetBuilder().finish()
   };
 }
 var lineHightlight = emptyRange();
 var highlightMode = "current";
 function buildLineDecorations(allLines, dragDestination2) {
-  const builder = new import_rangeset.RangeSetBuilder();
+  const builder = new import_state.RangeSetBuilder();
   import_lodash.default.forEach(allLines, ({ line, isTargetLine }) => {
     builder.add(line.from, line.from, dragHighlight);
     if (isTargetLine)
@@ -11158,6 +11137,7 @@ function highlightWholeItem(app, target) {
       current: buildLineDecorations(currentLines, dragDestination),
       parent: buildLineDecorations(parentLines, dragParentDestination)
     };
+    editor.dispatch({});
   } catch (e) {
     if (e.message.match(/Trying to find position for a DOM position outside of the document/))
       return;
@@ -11193,6 +11173,8 @@ var DragNDropPlugin = class extends import_obsidian.Plugin {
           if (event.target instanceof HTMLElement) {
             const line = event.target.closest(".cm-line");
             processDragOver(line, event.clientX);
+            const editor = event.target.cmView.editorView;
+            editor.dispatch({});
           }
           event.preventDefault();
         },

@@ -9,12 +9,12 @@ icon: 🔮
 
 ```dataviewjs
 let page = this.current();
-let now = luxon.DateTime.now();
-let lookback = luxon.Duration.fromISO(page["last"]);
+let now = dv.luxon.DateTime.now();
+let lookback = dv.luxon.Duration.fromISO(page["last"]);
 
 let infos = dv.pages("#information")
     .sort(p => p.file.mtime, 'desc')
-    .where(p => luxon.DateTime.fromISO(p.file.mtime) > now.minus(lookback))
+    .where(p => dv.luxon.DateTime.fromISO(p.file.mtime) > now.minus(lookback))
     .where(p => {
         console.log(`${Object.entries(p.file)}`);
         console.log(`${p.file.mday.toString().substring(0,10)}`);

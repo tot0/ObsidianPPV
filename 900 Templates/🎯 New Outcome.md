@@ -25,7 +25,7 @@ Years::
 Status:: 
 ```dataviewjs
 const {DvActions} = customJS
-DvActions.getOutcomeStatusButtons({app, dv, luxon, that:this, outcome:dv.current()})
+DvActions.getOutcomeStatusButtons({app, dv, luxon:dv.luxon, that:this, outcome:dv.current()})
 ```
 ## Projects
 ```dataview

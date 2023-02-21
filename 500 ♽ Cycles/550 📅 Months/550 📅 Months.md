@@ -12,7 +12,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"📅 New Month",
     folder:"500 ♽ Cycles/550 📅 Months",
@@ -22,13 +22,13 @@ DvActions.getNewFileButton({
 ```
 
 ## Last 3 Months
-
+e
 ```dataviewjs
 const {Constants, ObsidianUtils} = customJS;
 let months = dv.pages("#month");
-let threeMonths = luxon.Duration.fromISO('P3M');
-let currentMonth = luxon.DateTime.now().toFormat("yyyy-MM");
-let threeMonthsAgo = luxon.DateTime.now().minus(threeMonths).toFormat("yyyy-MM");
+let threeMonths = dv.luxon.Duration.fromISO('P12M');
+let currentMonth = dv.luxon.DateTime.now().toFormat("yyyy-MM");
+let threeMonthsAgo = dv.luxon.DateTime.now().minus(threeMonths).toFormat("yyyy-MM");
 let recentMonths = months
     .where(p => p.file.name >= threeMonthsAgo && p.file.name <= currentMonth)
     .sort(p => p.file.name, 'desc');

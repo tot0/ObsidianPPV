@@ -12,7 +12,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🌄 New Day",
     folder:"500 ♽ Cycles/520 🌄 Days",
@@ -26,9 +26,9 @@ DvActions.getNewFileButton({
 ```dataviewjs
 const {Constants, ObsidianUtils} = customJS;
 let days = dv.pages("#day");
-let oneWeek = luxon.Duration.fromISO('P1W');
-let currentDay = luxon.DateTime.now().toFormat("yyyy-MM-dd");
-let oneWeekAgo = luxon.DateTime.now().minus(oneWeek).toFormat("yyyy-MM-dd");
+let oneWeek = dv.luxon.Duration.fromISO('P2W');
+let currentDay = dv.luxon.DateTime.now().toFormat("yyyy-MM-dd");
+let oneWeekAgo = dv.luxon.DateTime.now().minus(oneWeek).toFormat("yyyy-MM-dd");
 let activeDays = days
     .where(p => p.file.name >= oneWeekAgo && p.file.name <= currentDay)
     .sort(p => p.file.name, 'desc');

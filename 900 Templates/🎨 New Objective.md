@@ -16,7 +16,7 @@ Years::
 Status:: 
 ```dataviewjs
 const {DvActions} = customJS
-DvActions.getObjectiveStatusButtons({app, dv, luxon, that:this, objective:dv.current()})
+DvActions.getObjectiveStatusButtons({app, dv, luxon:dv.luxon, that:this, objective:dv.current()})
 ```
 
 ## Why?

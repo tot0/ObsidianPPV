@@ -12,7 +12,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🎯 New Outcome",
     folder:"300 🚰 Pipelines/350 🎯 Outcomes",

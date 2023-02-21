@@ -41,7 +41,7 @@ Good thinking is precise.
 const {Constants, ObsidianUtils} = customJS;
 let years = dv.pages("#year");
 let activeYears = years
-    .where(p => p.file.name == luxon.DateTime.now().toFormat("yyyy"))
+    .where(p => p.file.name == dv.luxon.DateTime.now().toFormat("yyyy"))
     .sort(p => p.file.name, 'asc');
 activeYears.mutate(p => {
     p["objectives"] = p.file.inlinks

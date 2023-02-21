@@ -46,6 +46,7 @@ class Constants {
             onHold: "⏸ On Hold",
             future: "✨ Future",
             completed: "☑️ Completed",
+            removed: "✖️ Removed",
         };
         this.project.status.orderedMap = new Map();
         this.project.status.orderedMap.set(this.project.status.active, 0);
@@ -53,6 +54,7 @@ class Constants {
         this.project.status.orderedMap.set(this.project.status.onHold, 2);
         this.project.status.orderedMap.set(this.project.status.future, 3);
         this.project.status.orderedMap.set(this.project.status.completed, 4);
+        this.project.status.orderedMap.set(this.project.status.removed, 5);
 
         // Outcome
         this.outcome = {};

@@ -5,7 +5,7 @@
     },
     "Insert YAML attributes": {
       "Inserts the given YAML attributes into the YAML frontmatter. Put each attribute on a single line.": true,
-      "Text to insert": "startTime:\nendTime:\ndate:"
+      "Text to insert": "startTime: \nendTime: \ndate: "
     },
     "YAML Timestamp": {
       "Keep track of the date the file was last edited in the YAML front matter. Gets dates from file metadata.": false,
@@ -17,7 +17,8 @@
     },
     "YAML Title": {
       "Inserts the title of the file into the YAML frontmatter. Gets the title from the first H1 or filename.": true,
-      "Title Key": "title"
+      "Title Key": "title",
+      "Inserts the title of the file into the YAML frontmatter. Gets the title from the first H1 or filename if there is no H1.": false
     },
     "Header Increment": {
       "Heading levels should only increment by one level at a time": false
@@ -82,9 +83,135 @@
     },
     "Line Break at Document End": {
       "Ensures that there is exactly one line break at the end of a document.": false
+    },
+    "Escape YAML Special Characters": {
+      "Escapes colons with a space after them (: ), single quotes ('), and double quotes (\") in YAML.": false,
+      "Try to Escape Single Line Arrays": false
+    },
+    "Force YAML Escape": {
+      "Escapes the values for the specified YAML keys.": false,
+      "Force YAML Escape on Keys": ""
+    },
+    "Format Yaml Array": {
+      "Allows for the formatting of regular yaml arrays as either multi-line or single-line and `tags` and `aliases` are allowed to have some Obsidian specific yaml formats. Note that single string to single-line goes from a single string entry to a single-line array if more than 1 entry is present. The same is true for single string to multi-line except it becomes a multi-line array.": false,
+      "Format yaml aliases section": true,
+      "Format yaml tags section": true,
+      "Default yaml array section style": "single-line",
+      "Format yaml array sections": true,
+      "Force key values to be single-line arrays": "",
+      "Force key values to be multi-line arrays": ""
+    },
+    "Move Tags to Yaml": {
+      "Move all tags to Yaml frontmatter of the document.": false,
+      "Body tag operation": "Nothing",
+      "Tags to ignore": ""
+    },
+    "Remove YAML Keys": {
+      "Removes the YAML keys specified": false,
+      "YAML Keys to Remove": ""
+    },
+    "YAML Key Sort": {
+      "Sorts the YAML keys based on the order and priority specified. Note: may remove blank lines as well.": false,
+      "YAML Key Priority Sort Order": "",
+      "Priority Keys at Start of YAML": true,
+      "YAML Sort Order for Other Keys": "None"
+    },
+    "YAML Title Alias": {
+      "Inserts the title of the file into the YAML frontmatter's aliases section. Gets the title from the first H1 or filename.": true,
+      "Preserve existing aliases section style": true,
+      "Keep alias that matches the filename": false,
+      "Use the YAML key `linter-yaml-title-alias` to help with filename and heading changes": true
+    },
+    "Convert Bullet List Markers": {
+      "Converts common bullet list marker symbols to markdown list markers.": false
+    },
+    "Emphasis Style": {
+      "Makes sure the emphasis style is consistent.": false,
+      "Style": "consistent"
+    },
+    "No Bare URLs": {
+      "Encloses bare URLs with angle brackets except when enclosed in back ticks, square braces, or single or double quotes.": false
+    },
+    "Ordered List Style": {
+      "Makes sure that ordered lists follow the style specified. Note that 2 spaces or 1 tab is considered to be an indentation level.": false,
+      "Number Style": "ascending",
+      "Ordered List Indicator End Style": "."
+    },
+    "Strong Style": {
+      "Makes sure the strong style is consistent.": false,
+      "Style": "consistent"
+    },
+    "Two Spaces Between Lines with Content": {
+      "Makes sure that two spaces are added to the ends of lines with content continued on the next line for paragraphs, blockquotes, and list items": false
+    },
+    "Unordered List Style": {
+      "Makes sure that unordered lists follow the style specified.": false,
+      "List item style": "consistent"
+    },
+    "Empty Line Around Blockquotes": {
+      "Ensures that there is an empty line around blockquotes unless they start or end a document. **Note that an empty line is either one less level of nesting for blockquotes or a newline character.**": false
+    },
+    "Empty Line Around Code Fences": {
+      "Ensures that there is an empty line around code fences unless they start or end a document.": false
+    },
+    "Empty Line Around Math Blocks": {
+      "Ensures that there is an empty line around math blocks using `Number of Dollar Signs to Indicate a Math Block` to determine how many dollar signs indicates a math block for single-line math.": false
+    },
+    "Empty Line Around Tables": {
+      "Ensures that there is an empty line around github flavored tables unless they start or end a document.": false
+    },
+    "Move Math Block Indicators to Their Own Line": {
+      "Move all starting and ending math block indicators to their own lines using `Number of Dollar Signs to Indicate a Math Block` to determine how many dollar signs indicates a math block for single-line math.": false
+    },
+    "Remove Empty Lines Between List Markers and Checklists": {
+      "There should not be any empty lines between list markers and checklists.": false
+    },
+    "Remove link spacing": {
+      "Removes spacing around link text.": false
+    },
+    "Remove Space around Fullwidth Characters": {
+      "Ensures that fullwidth characters are not followed by whitespace (either single spaces or a tab). Note that this may causes issues with markdown format in some cases.": false
+    },
+    "Space between Chinese Japanese or Korean and English or numbers": {
+      "Ensures that Chinese, Japanese, or Korean and English or numbers are separated by a single space. Follows these [guidelines](https://github.com/sparanoid/chinese-copywriting-guidelines)": false
+    },
+    "Add Blockquote Indentation on Paste": {
+      "Adds blockquotes to all but the first line, when the cursor is in a blockquote/callout line during pasting": false
+    },
+    "Prevent Double Checklist Indicator on Paste": {
+      "Removes starting checklist indicator from the text to paste if the line the cursor is on in the file has a checklist indicator": false
+    },
+    "Prevent Double List Item Indicator on Paste": {
+      "Removes starting list indicator from the text to paste if the line the cursor is on in the file has a list indicator": false
+    },
+    "Proper Ellipsis on Paste": {
+      "Replaces three consecutive dots with an ellipsis even if they have a space between them in the text to paste": false
+    },
+    "Remove Hyphens on Paste": {
+      "Removes hyphens from the text to paste": false
+    },
+    "Remove Leading or Trailing Whitespace on Paste": {
+      "Removes any leading non-tab whitespace and all trailing whitespace for the text to paste": false
+    },
+    "Remove Leftover Footnotes from Quote on Paste": {
+      "Removes any leftover footnote references for the text to paste": false
+    },
+    "Remove Multiple Blank Lines on Paste": {
+      "Condenses multiple blank lines down into one blank line for the text to paste": false
     }
   },
   "lintOnSave": true,
+  "recordLintOnSaveLogs": false,
   "displayChanged": true,
-  "foldersToIgnore": []
+  "foldersToIgnore": [],
+  "linterLocale": "system-default",
+  "logLevel": 4,
+  "lintCommands": [],
+  "customRegexes": [],
+  "commonStyles": {
+    "aliasArrayStyle": "single-line",
+    "tagArrayStyle": "single-line",
+    "minimumNumberOfDollarSignsToBeAMathBlock": 2,
+    "escapeCharacter": "\""
+  }
 }

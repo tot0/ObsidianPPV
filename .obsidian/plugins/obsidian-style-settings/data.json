@@ -8,5 +8,6 @@
   "minimal-style@@h5-weight": 550,
   "minimal-style@@h6-weight": 500,
   "minimal-style@@checkbox-shape": "checkbox-circle",
-  "minimal-style@@minimal-strike-lists": false
+  "minimal-style@@minimal-strike-lists": false,
+  "pane-relief@@pr-sliding-panes-desktop-width": "900px"
 }
