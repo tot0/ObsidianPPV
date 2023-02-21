@@ -13,7 +13,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"😫 New Disappointment",
     folder:"700 Vaults/720 😫 Disappointments",
@@ -28,7 +28,7 @@ const {Constants, ObsidianUtils} = customJS;
 let disappointments = dv.pages("#disappointment");
 let activeDisappointments = disappointments
     .where(p => p["quarter"])
-    .where(p => p["quarter"].path == luxon.DateTime.now().toFormat("yyyyQq"));
+    .where(p => p["quarter"].path == dv.luxon.DateTime.now().toFormat("yyyyQq"));
 dv.table(
     ["Disappointment", "Quarter", "Month", "Week", "Day"],
     activeDisappointments.map(p => [

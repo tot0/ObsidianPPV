@@ -19,8 +19,8 @@ Theme::
 ### Actions Taken
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
-let month = luxon.DateTime.fromISO(this.current().file.name);
-let monthActions = DvActions.getDoneActions({luxon, dv, start: month.startOf('month'), end: month.endOf('month')});
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
+let monthActions = DvActions.getDoneActions({luxon:dv.luxon, dv, start: month.startOf('month'), end: month.endOf('month')});
 monthActions.mutate(action => {
     let week = action["done-date-obj"].toFormat("yyyy'-W'WW");
     action["week"] = week;//dv.page(week);
@@ -28,7 +28,7 @@ monthActions.mutate(action => {
 let groupedWeekActions = monthActions.groupBy(action => action["week"]);
 
 for (let week of groupedWeekActions) {
-    let week_date = luxon.DateTime.fromISO(week.key);
+    let week_date = dv.luxon.DateTime.fromISO(week.key);
     dv.header(3, ObsidianUtils.getDisplayLink(week.key, `${week.key}: ${week_date.startOf('week').toFormat("cccc, LLLL dd")} - ${week_date.endOf('week').toFormat("cccc, LLLL dd")}`));
     let week_page = dv.page(week.key);
     if (week_page) {
@@ -52,7 +52,7 @@ for (let week of groupedWeekActions) {
 
 ```dataviewjs
 let month = this.current().file.name;
-const startDateOfMonth = luxon.DateTime.fromISO(this.current().file.name);
+const startDateOfMonth = dv.luxon.DateTime.fromISO(this.current().file.name);
 const endDateOfMonth = startDateOfMonth.endOf('month');
 //dv.el("p", startDateOfQuarter);
 //dv.el("p", endDateOfQuarter);
@@ -78,23 +78,23 @@ SORT DESC
 
 ```dataviewjs
 const {DvGraphs} = customJS;
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 DvGraphs.getDailyMetricGraphs({
     that: this,
     start: month.startOf('month'),
     end: month.endOf('month'),
     dv,
-    luxon,
+    luxon:dv.luxon,
     window
 });
 ```
 
 ### Weekly Thoughts
 ```dataviewjs
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 let monthWeeks = dv.pages("#week")
     .where(p => {
-        let week = luxon.DateTime.fromISO(p.file.name);
+        let week = dv.luxon.DateTime.fromISO(p.file.name);
         return week >= month.startOf('month') && week <= month.endOf('month')
     }).sort(d => d.file.name, 'asc');
 for (let week of monthWeeks) {
@@ -109,10 +109,10 @@ for (let week of monthWeeks) {
 
 ### Wins
 ```dataviewjs
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 let monthWeeks = dv.pages("#week")
     .where(p => {
-        let week = luxon.DateTime.fromISO(p.file.name);
+        let week = dv.luxon.DateTime.fromISO(p.file.name);
         return week >= month.startOf('month') && week <= month.endOf('month')
     }).sort(d => d.file.name, 'asc');
 for (let week of monthWeeks) {
@@ -126,10 +126,10 @@ Wins::
 ### Challenges
 
 ```dataviewjs
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 let monthWeeks = dv.pages("#week")
     .where(p => {
-        let week = luxon.DateTime.fromISO(p.file.name);
+        let week = dv.luxon.DateTime.fromISO(p.file.name);
         return week >= month.startOf('month') && week <= month.endOf('month')
     }).sort(d => d.file.name, 'asc');
 for (let week of monthWeeks) {
@@ -142,10 +142,10 @@ Challenges::
 
 ### Improvements
 ```dataviewjs
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 let monthWeeks = dv.pages("#week")
     .where(p => {
-        let week = luxon.DateTime.fromISO(p.file.name);
+        let week = dv.luxon.DateTime.fromISO(p.file.name);
         return week >= month.startOf('month') && week <= month.endOf('month')
     }).sort(d => d.file.name, 'asc');
 for (let week of monthWeeks) {
@@ -158,10 +158,10 @@ Improvements::
 
 ### People
 ```dataviewjs
-let month = luxon.DateTime.fromISO(this.current().file.name);
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
 let people = dv.pages("#day")
     .where(p => {
-        let day = luxon.DateTime.fromISO(p.file.name);
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
         return day >= month.startOf('month') && day <= month.endOf('month')
     })
     .flatMap(d => d.file.inlinks
@@ -257,6 +257,10 @@ const {Constants, ObsidianUtils, DvActions} = customJS;
 
 let activeProjects = dv.pages("#project")
     .where(p => p["status"] == Constants.project.status.active)
+    .where(p => {
+        //console.log(`p["Quarter"]: ${p["Quarter"]}, this["Quarter"]: ${this.current()["Quarter"]}, check: ${dv.array(p["Quarter"]).indexOf(this.current()["Quarter"])}`);
+        return dv.array(p["Quarter"]).indexOf(this.current()["Quarter"]) != -1;
+    })
     .sort(p => p["priority"], 'asc');
 
 for (let project of activeProjects) {
@@ -282,7 +286,7 @@ for (let project of activeProjects) {
     } else {
         dv.el("b", "Project has no active actions!")
     }
-    dv.el("p", `![[${project.file.path}#Notes]]`);
+    //dv.el("p", `![[${project.file.path}#Notes]]`);
 }
 ```
 
@@ -292,7 +296,32 @@ for (let project of activeProjects) {
 
 ### Information
 
-// TODO: Information by category and tags? Explore via a graph view?
+```dataviewjs
+let month = dv.luxon.DateTime.fromISO(this.current().file.name);
+let infos = dv.pages("#day")
+    .where(p => {
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
+        return day >= month.startOf('month') && day <= month.endOf('month')
+    })
+    .flatMap(d => d.file.inlinks
+        .map(l => dv.page(l))
+        .where(l => l.file.tags.includes("#information"))
+        .map(p => [d, p])
+    )
+    .groupBy(i => i[1].file.name);
+
+
+for (let info of infos) {
+    dv.header("3", `[[${info.key}]]`);
+    for (let day of info.rows) {
+        let i = day[0];
+        dv.el("p", `[[${info.key}#`+i.file.name+`]]`);
+    }
+}
+if (infos.length == 0) {
+    dv.el("p", "No information came in this month...")
+}
+```
 
 ### House-keeping
 

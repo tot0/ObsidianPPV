@@ -12874,7 +12874,7 @@ function createNode(value, tagName, ctx) {
     map2.items.push(value);
     return map2;
   }
-  if (value instanceof String || value instanceof Number || value instanceof Boolean || typeof BigInt === "function" && value instanceof BigInt) {
+  if (value instanceof String || value instanceof Number || value instanceof Boolean || typeof BigInt !== "undefined" && value instanceof BigInt) {
     value = value.valueOf();
   }
   const { aliasDuplicateObjects, onAnchor, onTagObj, schema: schema4, sourceObjects } = ctx;
@@ -13349,7 +13349,7 @@ ${indent}${body}`;
 }
 function plainString(item, ctx, onComment, onChompKeep) {
   const { type, value } = item;
-  const { actualString, implicitKey, indent, inFlow } = ctx;
+  const { actualString, implicitKey, indent, indentStep, inFlow } = ctx;
   if (implicitKey && /[\n[\]{},]/.test(value) || inFlow && /[[\]{},]/.test(value)) {
     return quotedString(value, ctx);
   }
@@ -13359,9 +13359,13 @@ function plainString(item, ctx, onComment, onChompKeep) {
   if (!implicitKey && !inFlow && type !== Scalar.PLAIN && value.includes("\n")) {
     return blockString(item, ctx, onComment, onChompKeep);
   }
-  if (indent === "" && containsDocumentMarker(value)) {
-    ctx.forceBlockIndent = true;
-    return blockString(item, ctx, onComment, onChompKeep);
+  if (containsDocumentMarker(value)) {
+    if (indent === "") {
+      ctx.forceBlockIndent = true;
+      return blockString(item, ctx, onComment, onChompKeep);
+    } else if (implicitKey && indent === indentStep) {
+      return quotedString(value, ctx);
+    }
   }
   const str = value.replace(/\n+/g, `$&
 ${indent}`);
@@ -13421,6 +13425,7 @@ function createStringifyContext(doc, options) {
     doubleQuotedAsJSON: false,
     doubleQuotedMinMultiLineLength: 40,
     falseStr: "false",
+    flowCollectionPadding: true,
     indentSeq: true,
     lineWidth: 80,
     minContentWidth: 20,
@@ -13444,6 +13449,7 @@ function createStringifyContext(doc, options) {
   return {
     anchors: new Set(),
     doc,
+    flowCollectionPadding: opt.flowCollectionPadding ? " " : "",
     indent: "",
     indentStep: typeof opt.indent === "number" ? " ".repeat(opt.indent) : "  ",
     inFlow,
@@ -13523,6 +13529,7 @@ ${ctx.indent}${str}`;
 
 // node_modules/yaml/browser/dist/stringify/stringifyPair.js
 function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
+  var _a, _b;
   const { allNullValues, doc, indent, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx;
   let keyComment = isNode(key) && key.comment || null;
   if (simpleKeys) {
@@ -13574,43 +13581,64 @@ ${indent}:`;
     if (keyComment)
       str += lineComment(str, ctx.indent, commentString(keyComment));
   }
-  let vcb = "";
-  let valueComment = null;
+  let vsb, vcb, valueComment;
   if (isNode(value)) {
-    if (value.spaceBefore)
-      vcb = "\n";
-    if (value.commentBefore) {
-      const cs = commentString(value.commentBefore);
-      vcb += `
-${indentComment(cs, ctx.indent)}`;
-    }
+    vsb = !!value.spaceBefore;
+    vcb = value.commentBefore;
     valueComment = value.comment;
-  } else if (value && typeof value === "object") {
-    value = doc.createNode(value);
+  } else {
+    vsb = false;
+    vcb = null;
+    valueComment = null;
+    if (value && typeof value === "object")
+      value = doc.createNode(value);
   }
   ctx.implicitKey = false;
   if (!explicitKey && !keyComment && isScalar(value))
     ctx.indentAtStart = str.length + 1;
   chompKeep = false;
   if (!indentSeq && indentStep.length >= 2 && !ctx.inFlow && !explicitKey && isSeq(value) && !value.flow && !value.tag && !value.anchor) {
-    ctx.indent = ctx.indent.substr(2);
+    ctx.indent = ctx.indent.substring(2);
   }
   let valueCommentDone = false;
   const valueStr = stringify(value, ctx, () => valueCommentDone = true, () => chompKeep = true);
   let ws = " ";
-  if (vcb || keyComment) {
-    if (valueStr === "" && !ctx.inFlow)
-      ws = vcb === "\n" ? "\n\n" : vcb;
-    else
-      ws = `${vcb}
+  if (keyComment || vsb || vcb) {
+    ws = vsb ? "\n" : "";
+    if (vcb) {
+      const cs = commentString(vcb);
+      ws += `
+${indentComment(cs, ctx.indent)}`;
+    }
+    if (valueStr === "" && !ctx.inFlow) {
+      if (ws === "\n")
+        ws = "\n\n";
+    } else {
+      ws += `
 ${ctx.indent}`;
+    }
   } else if (!explicitKey && isCollection(value)) {
-    const flow = valueStr[0] === "[" || valueStr[0] === "{";
-    if (!flow || valueStr.includes("\n"))
-      ws = `
+    const vs0 = valueStr[0];
+    const nl0 = valueStr.indexOf("\n");
+    const hasNewline = nl0 !== -1;
+    const flow = (_b = (_a = ctx.inFlow) != null ? _a : value.flow) != null ? _b : value.items.length === 0;
+    if (hasNewline || !flow) {
+      let hasPropsLine = false;
+      if (hasNewline && (vs0 === "&" || vs0 === "!")) {
+        let sp0 = valueStr.indexOf(" ");
+        if (vs0 === "&" && sp0 !== -1 && sp0 < nl0 && valueStr[sp0 + 1] === "!") {
+          sp0 = valueStr.indexOf(" ", sp0 + 1);
+        }
+        if (sp0 === -1 || nl0 < sp0)
+          hasPropsLine = true;
+      }
+      if (!hasPropsLine)
+        ws = `
 ${ctx.indent}`;
-  } else if (valueStr === "" || valueStr[0] === "\n")
+    }
+  } else if (valueStr === "" || valueStr[0] === "\n") {
     ws = "";
+  }
   str += ws + valueStr;
   if (ctx.inFlow) {
     if (valueCommentDone && onComment)
@@ -13802,7 +13830,7 @@ ${indent}${line}` : "\n";
   return str;
 }
 function stringifyFlowCollection({ comment, items }, ctx, { flowChars, itemIndent, onComment }) {
-  const { indent, indentStep, options: { commentString } } = ctx;
+  const { indent, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx;
   itemIndent += indentStep;
   const itemCtx = Object.assign({}, ctx, {
     indent: itemIndent,
@@ -13869,7 +13897,7 @@ ${indentStep}${indent}${line}` : "\n";
       str += `
 ${indent}${end}`;
     } else {
-      str = `${start} ${lines.join(" ")} ${end}`;
+      str = `${start}${fcPadding}${lines.join(" ")}${fcPadding}${end}`;
     }
   }
   if (comment) {
@@ -13902,12 +13930,12 @@ function findPair(items, key) {
   return void 0;
 }
 var YAMLMap = class extends Collection {
+  static get tagName() {
+    return "tag:yaml.org,2002:map";
+  }
   constructor(schema4) {
     super(MAP, schema4);
     this.items = [];
-  }
-  static get tagName() {
-    return "tag:yaml.org,2002:map";
   }
   add(pair, overwrite) {
     var _a;
@@ -14022,12 +14050,12 @@ var map = {
 
 // node_modules/yaml/browser/dist/nodes/YAMLSeq.js
 var YAMLSeq = class extends Collection {
+  static get tagName() {
+    return "tag:yaml.org,2002:seq";
+  }
   constructor(schema4) {
     super(SEQ, schema4);
     this.items = [];
-  }
-  static get tagName() {
-    return "tag:yaml.org,2002:seq";
   }
   add(value) {
     this.items.push(value);
@@ -14639,7 +14667,7 @@ var YAMLSet = class extends YAMLMap {
     let pair;
     if (isPair(key))
       pair = key;
-    else if (typeof key === "object" && "key" in key && "value" in key && key.value === null)
+    else if (key && typeof key === "object" && "key" in key && "value" in key && key.value === null)
       pair = new Pair(key.key, null);
     else
       pair = new Pair(key, null);
@@ -15331,14 +15359,14 @@ var Upload2Notion = class {
       return response;
     });
   }
-  updatePage(notionID, title, childArr) {
+  updatePage(notionID, title, allowTags, tags, childArr) {
     return __async(this, null, function* () {
       yield this.deletePage(notionID);
-      const res = yield this.createPage(title, childArr);
+      const res = yield this.createPage(title, allowTags, tags, childArr);
       return res;
     });
   }
-  createPage(title, childArr) {
+  createPage(title, allowTags, tags, childArr) {
     return __async(this, null, function* () {
       const bodyString = {
         parent: {
@@ -15353,6 +15381,11 @@ var Upload2Notion = class {
                 }
               }
             ]
+          },
+          Tags: {
+            multi_select: allowTags && tags !== void 0 ? tags.map((tag) => {
+              return { "name": tag };
+            }) : []
           }
         },
         children: childArr
@@ -15382,7 +15415,7 @@ var Upload2Notion = class {
       }
     });
   }
-  syncMarkdownToNotion(title, markdown, nowFile, app, settings) {
+  syncMarkdownToNotion(title, allowTags, tags, markdown, nowFile, app, settings) {
     return __async(this, null, function* () {
       var _a;
       let res;
@@ -15392,9 +15425,9 @@ var Upload2Notion = class {
       const frontmasster = yield (_a = app.metadataCache.getFileCache(nowFile)) == null ? void 0 : _a.frontmatter;
       const notionID = frontmasster ? frontmasster.notionID : null;
       if (notionID) {
-        res = yield this.updatePage(notionID, title, file2Block);
+        res = yield this.updatePage(notionID, title, allowTags, tags, file2Block);
       } else {
-        res = yield this.createPage(title, file2Block);
+        res = yield this.createPage(title, allowTags, tags, file2Block);
       }
       if (res.status === 200) {
         yield this.updateYamlInfo(markdown, nowFile, res, app, settings);
@@ -15442,13 +15475,15 @@ var NoticeMsg = {
     "sync-fail": "Sync to notion fail: \n",
     "open-notion": "Please open the file that needs to be synchronized",
     "config-secrets-notion-api": "Please set up the notion API in the settings tab.",
-    "config-secrets-database-id": "Please set up the database id in the settings tab."
+    "config-secrets-database-id": "Please set up the database id in the settings tab.",
+    "set-tags-fail": "Set tags fail,please check the frontmatter of the file or close the tag switch in the settings tab."
   },
   "zh": {
     "notion-logo": "\u5206\u4EAB\u5230Notion",
     "sync-success": "\u540C\u6B65\u5230Notion\u6210\u529F:\n",
     "sync-fail": "\u540C\u6B65\u5230Notion\u5931\u8D25: \n",
-    "open-file": "\u8BF7\u6253\u5F00\u9700\u8981\u540C\u6B65\u7684\u6587\u4EF6"
+    "open-file": "\u8BF7\u6253\u5F00\u9700\u8981\u540C\u6B65\u7684\u6587\u4EF6",
+    "set-tags-fail": "\u8BBE\u7F6E\u6807\u7B7E\u5931\u8D25,\u8BF7\u68C0\u67E5\u6587\u4EF6\u7684frontmatter,\u6216\u8005\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5173\u95ED\u8BBE\u7F6Etags\u5F00\u5173"
   }
 };
 var NoticeMConfig = (lang) => {
@@ -15462,7 +15497,8 @@ var DEFAULT_SETTINGS = {
   databaseID: "",
   bannerUrl: "",
   notionID: "",
-  proxy: ""
+  proxy: "",
+  allowTags: false
 };
 var ObsidianSyncNotionPlugin = class extends import_obsidian3.Plugin {
   onload() {
@@ -15487,20 +15523,20 @@ var ObsidianSyncNotionPlugin = class extends import_obsidian3.Plugin {
   }
   upload() {
     return __async(this, null, function* () {
-      const { notionAPI, databaseID } = this.settings;
+      const { notionAPI, databaseID, allowTags } = this.settings;
       if (notionAPI === "" || databaseID === "") {
         new import_obsidian3.Notice("Please set up the notion API and database ID in the settings tab.");
         return;
       }
-      const { markDownData, nowFile } = yield this.getNowFileMarkdownContent(this.app);
+      const { markDownData, nowFile, tags } = yield this.getNowFileMarkdownContent(this.app);
       if (markDownData) {
         const { basename } = nowFile;
         const upload = new Upload2Notion(this);
-        const res = yield upload.syncMarkdownToNotion(basename, markDownData, nowFile, this.app, this.settings);
+        const res = yield upload.syncMarkdownToNotion(basename, allowTags, tags, markDownData, nowFile, this.app, this.settings);
         if (res.status === 200) {
           new import_obsidian3.Notice(`${langConfig["sync-success"]}${basename}`);
         } else {
-          new import_obsidian3.Notice(`${langConfig["sync-fail"]}${basename}`);
+          new import_obsidian3.Notice(`${langConfig["sync-fail"]}${basename}`, 5e3);
         }
       }
     });
@@ -15508,11 +15544,21 @@ var ObsidianSyncNotionPlugin = class extends import_obsidian3.Plugin {
   getNowFileMarkdownContent(app) {
     return __async(this, null, function* () {
       const nowFile = app.workspace.getActiveFile();
+      const { allowTags } = this.settings;
+      let tags = [];
+      try {
+        if (allowTags) {
+          tags = app.metadataCache.getFileCache(nowFile).frontmatter.tags;
+        }
+      } catch (error) {
+        new import_obsidian3.Notice(langConfig["set-tags-fail"]);
+      }
       if (nowFile) {
         const markDownData = yield nowFile.vault.read(nowFile);
         return {
           markDownData,
-          nowFile
+          nowFile,
+          tags
         };
       } else {
         new import_obsidian3.Notice(langConfig["open-file"]);
@@ -15542,12 +15588,11 @@ var SampleSettingTab = class extends import_obsidian3.PluginSettingTab {
     containerEl.createEl("h2", {
       text: "Settings for obsidian to notion plugin."
     });
-    const notionApiKye = new import_obsidian3.Setting(containerEl).setName("Notion API Token").setDesc("It's a secret").addText((text) => {
+    new import_obsidian3.Setting(containerEl).setName("Notion API Token").setDesc("It's a secret").addText((text) => {
       let t = text.setPlaceholder("Enter your Notion API Token").setValue(this.plugin.settings.notionAPI).onChange((value) => __async(this, null, function* () {
         this.plugin.settings.notionAPI = value;
         yield this.plugin.saveSettings();
       }));
-      t.inputEl.type = "password";
       return t;
     });
     const notionDatabaseID = new import_obsidian3.Setting(containerEl).setName("Database ID").setDesc("It's a secret").addText((text) => {
@@ -15555,16 +15600,18 @@ var SampleSettingTab = class extends import_obsidian3.PluginSettingTab {
         this.plugin.settings.databaseID = value;
         yield this.plugin.saveSettings();
       }));
-      t.inputEl.type = "password";
       return t;
     });
-    notionDatabaseID.controlEl.querySelector("input").type = "password";
     new import_obsidian3.Setting(containerEl).setName("Banner url(optional)").setDesc("page banner url(optional), default is empty, if you want to show a banner, please enter the url(like:https://raw.githubusercontent.com/EasyChris/obsidian-to-notion/ae7a9ac6cf427f3ca338a409ce6967ced9506f12/doc/2.png)").addText((text) => text.setPlaceholder("Enter banner pic url: ").setValue(this.plugin.settings.bannerUrl).onChange((value) => __async(this, null, function* () {
       this.plugin.settings.bannerUrl = value;
       yield this.plugin.saveSettings();
     })));
     new import_obsidian3.Setting(containerEl).setName("Notion ID(optional)").setDesc("Your notion ID(optional),share link likes:https://username.notion.site/,your notion id is [username]").addText((text) => text.setPlaceholder("Enter notion ID(options) ").setValue(this.plugin.settings.notionID).onChange((value) => __async(this, null, function* () {
       this.plugin.settings.notionID = value;
+      yield this.plugin.saveSettings();
+    })));
+    new import_obsidian3.Setting(containerEl).setName("Convert tags(optional)").setDesc("Transfer the Obsidian tags to the Notion table. It requires the column with the name 'Tags'").addToggle((toggle) => toggle.setValue(this.plugin.settings.allowTags).onChange((value) => __async(this, null, function* () {
+      this.plugin.settings.allowTags = value;
       yield this.plugin.saveSettings();
     })));
   }

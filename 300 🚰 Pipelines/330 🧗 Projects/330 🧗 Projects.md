@@ -1,3 +1,4 @@
+
 ---
 alias:
 - 🧗 Projects
@@ -12,7 +13,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🧗 New Project",
     folder:"300 🚰 Pipelines/330 🧗 Projects",

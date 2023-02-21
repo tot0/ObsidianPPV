@@ -8,11 +8,11 @@ title: "\U0001F680 Action Zone"
 
 ```dataviewjs
 const {DvActions} = customJS
-//DvActions.getNewActionButton({app, dv, luxon, that:this})
+//DvActions.getNewActionButton({app, dv, luxon:dv.luxon, that:this})
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🛠 New Action",
     folder:"300 🚰 Pipelines/320 🛠 Actions",
@@ -21,7 +21,7 @@ DvActions.getNewFileButton({
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🌄 New Day",
     folder:"500 ♽ Cycles/520 🌄 Days",
@@ -31,7 +31,7 @@ DvActions.getNewFileButton({
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"📝 New Note",
     folder:"700 Vaults/Notes",
@@ -44,19 +44,19 @@ DvActions.getNewFileButton({
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
 // TODO: Split this out and debug priorty ordering.
-//DvActions.getTodayActionTable({app, dv, luxon, that:this})
+//DvActions.getTodayActionTable({app, dv, luxon:dv.luxon, that:this})
 
-let today = luxon.DateTime.now();
+let today = dv.luxon.DateTime.now();
 let birthdays = dv.pages("#person")
     .where(p => p["birthday"])
     .mutate(p => {
-        p["birthday-obj"] = luxon.DateTime.fromISO(p["birthday"].path);
+        p["birthday-obj"] = dv.luxon.DateTime.fromISO(p["birthday"].path);
         p["birthday-this-year-obj"] = p["birthday-obj"].set({year: today.year});
     })
-    .where(p => p["birthday-this-year-obj"] < today.plus(luxon.Duration.fromISO("P1W")) && p["birthday-this-year-obj"] >= today)
+    .where(p => p["birthday-this-year-obj"] < today.plus(dv.luxon.Duration.fromISO("P1W")) && p["birthday-this-year-obj"] >= today)
 ;
 
-let todayActions = DvActions.getDoToday({luxon, dv});
+let todayActions = DvActions.getDoToday({luxon:dv.luxon, dv});
 //dv.el("p", todayActions.length);
 dv.table(
     [
@@ -77,9 +77,9 @@ dv.table(
             ObsidianUtils.getDisplayLink(action.file.name, action.alias[0]),
             action["Priority"],
             action["do-date"],
-            action["Status"],
+            action["Status"]
             //action["Projects"],
-            DvActions.getActionDoneButton({that:this, action, app, luxon})
+            //DvActions.getActionDoneButton({that:this, action, app, luxon:dv.luxon})
         ])
     )
 );
@@ -91,10 +91,10 @@ dv.table(
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
 // TODO: Split this out and debug priorty ordering.
-//DvActions.getTodayActionTable({app, dv, luxon, that:this})
-let tomorrow = luxon.DateTime.now().plus(luxon.Duration.fromMillis(86400000)); // 1 day in milliseconds
+//DvActions.getTodayActionTable({app, dv, luxon:dv.luxon, that:this})
+let tomorrow = dv.luxon.DateTime.now().plus(dv.luxon.Duration.fromMillis(86400000)); // 1 day in milliseconds
 dv.el("p", "🌄 " + dv.fileLink(tomorrow.toFormat("yyyy-MM-dd")));
-let tomorrowActions = DvActions.getActiveActions({luxon, dv, start: tomorrow.startOf('day'), end: tomorrow.endOf('day')});
+let tomorrowActions = DvActions.getActiveActions({luxon:dv.luxon, dv, start: tomorrow.startOf('day'), end: tomorrow.endOf('day')});
 dv.table(
     ["Item", "Priority", "Do Date", "Status", "Projects", ""],
     tomorrowActions.map(action => [
@@ -103,7 +103,7 @@ dv.table(
         action["do-date"],
         action["status"],
         action["projects"],
-        DvActions.getActionDoneButton({that:this, action, app, luxon})
+        DvActions.getActionDoneButton({that:this, action, app, luxon:dv.luxon})
     ])
 );
 // Planning Headings from days notes
@@ -117,9 +117,9 @@ for (let action of tomorrowActions) {
 
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
-let tomorrow = luxon.DateTime.now().plus(luxon.Duration.fromMillis(86400000)); // 1 day in milliseconds
-let sevenDays = luxon.DateTime.now().plus(luxon.Duration.fromMillis(86400000 * 7)); // 7 days in milliseconds
-let sevenDaysActions = DvActions.getActiveActions({luxon, dv, start: tomorrow.startOf('day'), end: sevenDays.endOf('day')});
+let tomorrow = dv.luxon.DateTime.now().plus(dv.luxon.Duration.fromMillis(86400000)); // 1 day in milliseconds
+let sevenDays = dv.luxon.DateTime.now().plus(dv.luxon.Duration.fromMillis(86400000 * 30)); // 7 days in milliseconds
+let sevenDaysActions = DvActions.getActiveActions({luxon:dv.luxon, dv, start: tomorrow.startOf('day'), end: sevenDays.endOf('day')});
 let groupedNext7Days = sevenDaysActions.groupBy(action => action["do-date"]);
 
 for (let day of groupedNext7Days) {
@@ -142,10 +142,10 @@ for (let day of groupedNext7Days) {
 ```dataviewjs
 // const { DvActions } = customJS;
 // const { renderCalendar } = app.plugins.plugins["obsidian-full-calendar"];
-// let now = luxon.DateTime.now();
-// let nextDays = luxon.Duration.fromISO("P1W");
+// let now = dv.luxon.DateTime.now();
+// let nextDays = dv.luxon.Duration.fromISO("P1W");
 // let actions = DvActions.getActions({
-//     luxon,
+//     luxon:dv.luxon,
 //     dv,
 //     start: now,
 //     end: now.plus(nextDays).endOf('day')

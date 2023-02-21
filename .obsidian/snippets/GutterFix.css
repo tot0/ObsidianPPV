@@ -1,0 +1,4 @@
+/* HACK for v1.0 Obsidian */
+.markdown-source-view.mod-cm6 .cm-gutters {
+    margin-left: unset !important;
+}

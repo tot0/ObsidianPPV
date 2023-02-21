@@ -21,7 +21,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🏛 New Pillar",
     folder:"000 🏛 Pillars",

@@ -7,6 +7,7 @@ tags:
 ---
 
 # 🗓 <% tp.date.now("YYYY") %>-W<% tp.date.now("WW") %>
+[[<% tp.date.now("YYYY") %>-W<% tp.date.now("WW", -7) %>]] <-> [[<% tp.date.now("YYYY") %>-W<% tp.date.now("WW", 7) %>]]
 [[<% tp.date.weekday("YYYY-MM-DD", 1) %>]] => [[<% tp.date.weekday("YYYY-MM-DD", 7) %>]]
 Year:: [[<% tp.date.now("YYYY") %>]]
 Quarter:: [[<% tp.date.now("YYYY") %>Q<% tp.date.now("Q") %>]]
@@ -18,8 +19,8 @@ Focus::
 
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
-let week = luxon.DateTime.fromISO(this.current().file.name);
-let weekActions = DvActions.getDoneActions({luxon, dv, start: week.startOf('week'), end: week.endOf('week')});
+let week = dv.luxon.DateTime.fromISO(this.current().file.name);
+let weekActions = DvActions.getDoneActions({luxon:dv.luxon, dv, start: week.startOf('week'), end: week.endOf('week')});
 let groupedWeekActions = weekActions.groupBy(action => action["done-date"]);
 
 for (let day of groupedWeekActions) {
@@ -45,13 +46,13 @@ SORT DESC
 ## Health Metrics
 ```dataviewjs
 const {DvGraphs} = customJS;
-let week = luxon.DateTime.fromISO(this.current().file.name);
+let week = dv.luxon.DateTime.fromISO(this.current().file.name);
 DvGraphs.getDailyMetricGraphs({
     that: this,
     start: week.startOf('week'),
     end: week.endOf('week'),
     dv,
-    luxon,
+    luxon:dv.luxon,
     window
 });
 ```
@@ -59,10 +60,10 @@ DvGraphs.getDailyMetricGraphs({
 ## Daily Thoughts
 
 ```dataviewjs
-let week = luxon.DateTime.fromISO(this.current().file.name);
+let week = dv.luxon.DateTime.fromISO(this.current().file.name);
 let weekDays = dv.pages("#day")
     .where(p => {
-        let day = luxon.DateTime.fromISO(p.file.name);
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
         return day >= week.startOf('week') && day <= week.endOf('week')
     }).sort(d => d.file.name, 'asc');
 for (let day of weekDays) {
@@ -108,10 +109,10 @@ Improvements::
 
 ### People
 ```dataviewjs
-let week = luxon.DateTime.fromISO(this.current().file.name);
+let week = dv.luxon.DateTime.fromISO(this.current().file.name);
 let people = dv.pages("#day")
     .where(p => {
-        let day = luxon.DateTime.fromISO(p.file.name);
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
         return day >= week.startOf('week') && day <= week.endOf('week')
     })
     .flatMap(d => d.file.inlinks
@@ -140,10 +141,10 @@ if (people.length == 0) {
 
 ### Information
 ```dataviewjs
-let week = luxon.DateTime.fromISO(this.current().file.name);
+let week = dv.luxon.DateTime.fromISO(this.current().file.name);
 let infos = dv.pages("#day")
     .where(p => {
-        let day = luxon.DateTime.fromISO(p.file.name);
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
         return day >= week.startOf('week') && day <= week.endOf('week')
     })
     .flatMap(d => d.file.inlinks
@@ -187,6 +188,10 @@ const {Constants, ObsidianUtils, DvActions} = customJS;
 
 let activeProjects = dv.pages("#project")
     .where(p => p["status"] == Constants.project.status.active)
+    .where(p => {
+        //console.log(`p["Quarter"]: ${p["Quarter"]}, this["Quarter"]: ${this.current()["Quarter"]}, check: ${dv.array(p["Quarter"]).indexOf(this.current()["Quarter"])}`);
+        return dv.array(p["Quarter"]).indexOf(this.current()["Quarter"]) != -1;
+    })
     .sort(p => p["priority"], 'asc');
 
 for (let project of activeProjects) {
@@ -212,7 +217,7 @@ for (let project of activeProjects) {
     } else {
         dv.el("b", "Project has no active actions!")
     }
-    dv.el("p", `![[${project.file.path}#Notes]]`);
+    //dv.el("p", `![[${project.file.path}#Notes]]`);
 }
 ```
 

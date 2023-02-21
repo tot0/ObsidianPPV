@@ -12,7 +12,7 @@ const {DvActions} = customJS
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🌏 New Year",
     folder:"500 ♽ Cycles/590 🌏 Years",

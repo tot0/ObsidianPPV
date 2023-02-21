@@ -1,10 +1,10 @@
 ```dataviewjs
 const {DvActions} = customJS
-//DvActions.getNewActionButton({app, dv, luxon, that:this})
+//DvActions.getNewActionButton({app, dv, luxon:dv.luxon, that:this})
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🛠 New Action",
     folder:"300 🚰 Pipelines/320 🛠 Actions",
@@ -13,7 +13,7 @@ DvActions.getNewFileButton({
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"🌄 New Day",
     folder:"500 ♽ Cycles/520 🌄 Days",
@@ -23,14 +23,14 @@ DvActions.getNewFileButton({
 DvActions.getNewFileButton({
     app,
     dv,
-    luxon,
+    luxon:dv.luxon,
     that:this,
     buttonName:"📝 New Note",
     folder:"700 Vaults/Notes",
     split:true,
 })
 
-let now = luxon.DateTime.now();
+let now = dv.luxon.DateTime.now();
 dv.el("p", `[[${now.toFormat("yyyy-MM-dd")}]]`)
 dv.el("p", `[[${now.toFormat("yyyy'-W'WW")}]]`)
 dv.el("p", `[[${now.toFormat("yyyy-MM")}]]`)

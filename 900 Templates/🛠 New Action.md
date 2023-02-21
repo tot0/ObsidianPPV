@@ -9,7 +9,7 @@ pillars: []
 ---
 ```dataviewjs
 const {DvActions} = customJS
-DvActions.getActionPriorityButtons({app, dv, luxon, that:this, action:dv.current()})
+DvActions.getActionPriorityButtons({app, dv, luxon:dv.luxon, that:this, action:dv.current()})
 ```
 Priority:: 🟥 1st
 Do Date::
@@ -21,6 +21,6 @@ Owner:: [[Lucas Pickup|Lucas]]
 Next:: 
 ```dataviewjs
 const {DvActions} = customJS
-DvActions.getActionStatusButtons({app, dv, luxon, that:this, action:dv.current()})
+DvActions.getActionStatusButtons({app, dv, luxon:dv.luxon, that:this, action:dv.current()})
 ```
 # 🛠 New Action

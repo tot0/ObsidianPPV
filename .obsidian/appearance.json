@@ -1,11 +1,11 @@
 {
-  "baseFontSize": 22,
+  "baseFontSize": 20,
   "translucency": false,
   "cssTheme": "",
   "enabledCssSnippets": [
-    "CommandCenter",
     "obsidian.css.live-preview.list-rainbow-indents",
-    "dashboard"
+    "CommandCenter",
+    "GutterFix"
   ],
   "accentColor": ""
 }

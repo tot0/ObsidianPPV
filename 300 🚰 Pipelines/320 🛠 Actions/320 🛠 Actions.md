@@ -13,10 +13,10 @@ title: 🛠 Actions
 ```dataviewjs
 const {DvActions, ObsidianUtils} = customJS;
 let page = this.current();
-let now = luxon.DateTime.now();
-let lookback = luxon.Duration.fromISO(page["last"]);
-//let lookback = luxon.DateTime.now().minus(luxon.Duration.fromMillis(86400000 * 20)); // 7 days in milliseconds
-let actions = DvActions.getDoneActions({luxon, dv, start: now.minus(lookback).endOf('day'), end: now});
+let now = dv.luxon.DateTime.now();
+let lookback = dv.luxon.Duration.fromISO(page["last"]);
+//let lookback = dv.luxon.DateTime.now().minus(dv.luxon.Duration.fromMillis(86400000 * 20)); // 7 days in milliseconds
+let actions = DvActions.getDoneActions({luxon:dv.luxon, dv, start: now.minus(lookback).endOf('day'), end: now});
 let groupedActions = actions.groupBy(action => action["do-date"]).sort(g => g.key, "desc");
 
 for (let day of groupedActions) {

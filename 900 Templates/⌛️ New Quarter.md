@@ -26,7 +26,7 @@ DvGraphs.getDailyMetricGraphs({
     start: quarter.startOf('quarter'),
     end: quarter.endOf('quarter'),
     dv,
-    luxon,
+    luxon:dv.luxon,
     window
 });
 ```
@@ -119,7 +119,7 @@ dv.table(
 const quarter = DateTime.fromFormat(this.current().file.name.slice(-1), 'q');
 let quarterMonths = dv.pages("#month")
     .where(p => {
-        let month = luxon.DateTime.fromISO(p.file.name);
+        let month = dv.luxon.DateTime.fromISO(p.file.name);
         return month >= quarter.startOf('quarter') && month <= quarter.endOf('quarter')
     }).sort(d => d.file.name, 'asc');
 for (let month of quarterMonths) {
@@ -135,7 +135,7 @@ Wins::
 const quarter = DateTime.fromFormat(this.current().file.name.slice(-1), 'q');
 let quarterMonths = dv.pages("#month")
     .where(p => {
-        let month = luxon.DateTime.fromISO(p.file.name);
+        let month = dv.luxon.DateTime.fromISO(p.file.name);
         return month >= quarter.startOf('quarter') && month <= quarter.endOf('quarter')
     }).sort(d => d.file.name, 'asc');
 for (let month of quarterMonths) {
@@ -152,7 +152,7 @@ Challenges::
 const quarter = DateTime.fromFormat(this.current().file.name.slice(-1), 'q');
 let quarterMonths = dv.pages("#month")
     .where(p => {
-        let month = luxon.DateTime.fromISO(p.file.name);
+        let month = dv.luxon.DateTime.fromISO(p.file.name);
         return month >= quarter.startOf('quarter') && month <= quarter.endOf('quarter')
     }).sort(d => d.file.name, 'asc');
 for (let month of quarterMonths) {
@@ -169,7 +169,7 @@ Improvements::
 const quarter = DateTime.fromFormat(this.current().file.name.slice(-1), 'q');
 let quarterMonths = dv.pages("#month")
     .where(p => {
-        let month = luxon.DateTime.fromISO(p.file.name);
+        let month = dv.luxon.DateTime.fromISO(p.file.name);
         return month >= quarter.startOf('quarter') && month <= quarter.endOf('quarter')
     }).sort(d => d.file.name, 'asc');
 for (let month of quarterMonths) {
@@ -185,7 +185,7 @@ for (let month of quarterMonths) {
 const quarter = DateTime.fromFormat(this.current().file.name.slice(-1), 'q');
 let people = dv.pages("#day")
     .where(p => {
-        let day = luxon.DateTime.fromISO(p.file.name);
+        let day = dv.luxon.DateTime.fromISO(p.file.name);
         return day >= quarter.startOf('quarter') && day <= quarter.endOf('quarter')
     })
     .flatMap(d => d.file.inlinks
